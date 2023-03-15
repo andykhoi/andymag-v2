@@ -21,7 +21,7 @@ export const Font: FC<FontProps> = ({
 
 	const getTWFontSize = () => {
 		const fontSize = fontSizingChart[fontScale]
-		return `font-[${fontSize}]`
+		return `text-[${fontSize}]`
 	}
 
 	const getCSSVariableFontClasses = () => {

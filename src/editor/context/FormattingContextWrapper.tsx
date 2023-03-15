@@ -4,7 +4,8 @@ import {
 	useState,
 	ReactNode,
 	Dispatch,
-	SetStateAction
+	SetStateAction,
+	useContext
 } from 'react'
 // import { Inter } from '@next/font/google'
 import localFont  from '@next/font/local'
@@ -14,6 +15,14 @@ interface FormattingContextType {
 	defaultPadding: string
 	optimalContentWidth: string
 	autoCollapseHeader: boolean
+
+	sidebarWidth: string
+	panelWidth: string
+
+	breakpoints: { // breakpoint properties should be used with css 'calc' 
+		optimal: string
+		sidebar: string
+	}
 
 	fontScale: 'sm' | 'md' | 'lg'
 	fontSizingChart: {
@@ -29,19 +38,19 @@ interface FormattingContextType {
 	defaultFont: string
 
 	setFontScale: Dispatch<SetStateAction<'sm' | 'md' | 'lg'>>
-	setfontSizingChart: Dispatch<SetStateAction<{
-		sm: string,
-		md: string,
-		lg: string,
-	}>>
+	// setfontSizingChart: Dispatch<SetStateAction<{
+	// 	sm: string,
+	// 	md: string,
+	// 	lg: string,
+	// }>>
 
 	// setDefaultFont: Dispatch<SetStateAction<string>>
-	setDefaultPadding: Dispatch<SetStateAction<string>>
-	setOptimalContentWidth: Dispatch<SetStateAction<string>>
+	// setDefaultPadding: Dispatch<SetStateAction<string>>
+	// setOptimalContentWidth: Dispatch<SetStateAction<string>>
 	setAutoCollapseHeader: Dispatch<SetStateAction<boolean>>
 }
 
-type FormattingContextWrapperProps = Partial<Pick<FormattingContextType, 'autoCollapseHeader' | 'defaultPadding' | 'optimalContentWidth'  | 'fontScale' | 'fontSizingChart'>> & { children: ReactNode }
+export type FormattingContextWrapperProps = Partial<Pick<FormattingContextType, 'autoCollapseHeader' | 'defaultPadding' | 'optimalContentWidth'  | 'fontScale' | 'fontSizingChart' | 'breakpoints' | 'panelWidth' | 'sidebarWidth'>> & { children: ReactNode }
 
 // const inter = Inter({
 // 	weight: 'variable',
@@ -90,6 +99,14 @@ const defaultFormattingContextValue: FormattingContextType = {
 	optimalContentWidth: '65ch',
 	autoCollapseHeader: false,
 
+	sidebarWidth: '76px',
+	panelWidth: '352px',
+
+	breakpoints: {
+		optimal: '',
+		sidebar: ''
+	},
+
 	fontScale: 'md',
 	fontSizingChart: {
 		sm: '18px',
@@ -102,10 +119,10 @@ const defaultFormattingContextValue: FormattingContextType = {
 	defaultFont: 'charter',
 
 	setFontScale: () => null,
-	setfontSizingChart: () => null,
-	setDefaultPadding: () => null,
+	// setfontSizingChart: () => null,
+	// setDefaultPadding: () => null,
 	setAutoCollapseHeader: () => null,
-	setOptimalContentWidth: () => null
+	// setOptimalContentWidth: () => null
 }
 
 export const FormattingContext = createContext<FormattingContextType>(defaultFormattingContextValue)
@@ -118,6 +135,8 @@ export const FormattingContextWrapper: FC<FormattingContextWrapperProps> = ({
 	autoCollapseHeader: overrideAutoCollapseHeader = null,
 	fontScale: overrideFontScale = null,
 	fontSizingChart: overridefontSizingChart = null,
+	panelWidth: overridePanelWidth = null,
+	sidebarWidth: overrideSidebarWidth = null,
 	children
 }) => {
 	const [defaultPadding, setDefaultPadding] = useState(overrideDefaultPadding || defaultFormattingContextValue.defaultPadding)
@@ -127,12 +146,19 @@ export const FormattingContextWrapper: FC<FormattingContextWrapperProps> = ({
 	const [fontSizingChart, setfontSizingChart] = useState(overridefontSizingChart || defaultFormattingContextValue.fontSizingChart)
 	const [fontFamilies, ] = useState(defaultFormattingContextValue.fontFamilies)
 	const [defaultFont, ] = useState(defaultFormattingContextValue.defaultFont)
+	const [sidebarWidth, ] = useState(overrideSidebarWidth || defaultFormattingContextValue.sidebarWidth)
+	const [panelWidth, ] = useState(overridePanelWidth || defaultFormattingContextValue.panelWidth)
+	const [breakpoints, ] = useState({
+		optimal: `${optimalContentWidth} + (2 * ${defaultPadding})`,
+		sidebar: `${sidebarWidth} + ${panelWidth} + (${optimalContentWidth} + (2 * ${defaultPadding}))`,
+	})
+
 	const store = {
 		defaultPadding,
-		setDefaultPadding,
+		// setDefaultPadding,
 
 		optimalContentWidth,
-		setOptimalContentWidth,
+		// setOptimalContentWidth,
 
 		autoCollapseHeader,
 		setAutoCollapseHeader,
@@ -141,14 +167,22 @@ export const FormattingContextWrapper: FC<FormattingContextWrapperProps> = ({
 		setFontScale,
 
 		fontSizingChart,
-		setfontSizingChart,
+		// setfontSizingChart,
 
 		fontFamilies,
-		defaultFont
+		defaultFont,
+
+		breakpoints,
+		panelWidth,
+		sidebarWidth
 	}
 	return (
 		<FormattingContextProvider value={store}>
 			{ children }
 		</FormattingContextProvider>
 	)
+}
+
+export const useFormatting = () => {
+	return useContext(FormattingContext)
 }

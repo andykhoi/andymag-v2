@@ -12,7 +12,7 @@ interface PeopleContextType {
 	getPerson: (userId: string) => Person | null
 }
 
-type PeopleContextWrapperProps = Partial<Pick<PeopleContextType, 'people'>> & { children: ReactNode }
+export type PeopleContextWrapperProps = Partial<Pick<PeopleContextType, 'people'>> & { children: ReactNode }
 
 const defaultPeopleContextValue: PeopleContextType = {
 	people: [],
