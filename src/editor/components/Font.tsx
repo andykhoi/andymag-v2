@@ -1,5 +1,5 @@
 import { FC, ReactNode, useContext } from 'react'
-import { FormattingContext } from '../context/FormattingContextWrapper'
+import { FormattingContext, useFormatting } from '../context/FormattingContextWrapper'
 
 interface FontProps {
 	children: ReactNode
@@ -13,33 +13,28 @@ export const Font: FC<FontProps> = ({
 		fontSizingChart,
 		defaultFont,
 		fontFamilies
-	} = useContext(FormattingContext)
-	
-	const getTWDefaultFontFamily = () => {
-		return `font-${defaultFont}`
+	} = useFormatting()
+
+	const getEditorFontFamily = () => {
+		const family = fontFamilies[`${defaultFont}`]
+		return family.style.fontFamily
 	}
 
-	const getTWFontSize = () => {
-		const fontSize = fontSizingChart[fontScale]
-		return `text-[${fontSize}]`
-	}
-
-	const getCSSVariableFontClasses = () => {
-		const variables = []
-		for (const family in fontFamilies) {
-			variables.push(fontFamilies[family].variable)
-		}
-		return variables.join(' ')
-	}
-
-	const generateClassNames = () => {
-		const classNames = `${getCSSVariableFontClasses()} ${getTWDefaultFontFamily()} ${getTWFontSize()}`
-		return classNames
+	const getEditorFontSize = () => {
+		const fontSize = fontSizingChart[`${fontScale}`]
+		return fontSize
 	}
 
 	return (
-		<div className={generateClassNames()}>
+		<div
+		>
 			{ children }
+			<style jsx>{`
+				div {
+					font-family: ${getEditorFontFamily()};
+					font-size: ${getEditorFontSize()};
+				}
+			`}</style>
 		</div>
 	)
 }

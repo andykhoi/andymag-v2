@@ -11,29 +11,62 @@ export const Grid: FC<GridProps> = ({
 	const {
 		optimalContentWidth,
 		defaultPadding,
+		sidebarWidth,
 		breakpoints: {
 			optimal,
 			sidebar
 		}
 	} = useFormatting()
-
-	const getTWDefaultClassNames = () => {
-		return ['grid', 'w-screen', `grid-cols-[${defaultPadding}_1fr_${defaultPadding}] col-start-2 col-span-1`].join(' ')
-	}
-
-	const getTWOptimalBreakpointClassNames = () => {
-		const optimalBreakpoint = `min-[calc(${optimal})]`
-		return [`${optimalBreakpoint}:grid-cols-[1fr_${optimalContentWidth}_1fr]`]
-	}
-
-	const getTWSidebarBreakpointClassNames = () => {
-		const sidebarBreakpoint = `min-[calc(${sidebar})]`
-		return [`${sidebarBreakpoint}:w-[calc]`]
-	}
-
+	
 	return (
+		<>
 		<div>
 			{ children }
+			
+			{/* styles */}
+			<style jsx>{`
+				div {
+					display: grid;
+					width: 100%;
+					grid-auto-flow: column;
+					// min-height: 100%;
+				}
+				div > :global(div) {
+					grid-column: 2;
+				}
+			`}</style>
+			<style jsx>{`
+				div {
+					grid-template-columns: 1fr min(${optimalContentWidth}, calc(100% - (2*${defaultPadding}))) 1fr;
+				}
+			`}</style>
+			{/* <style jsx>{`
+				@media screen and (min-width: calc(${optimal})) {
+					div {
+						grid-template-columns: 1fr ${optimalContentWidth} 1fr;
+					}
+				}
+			`}</style> */}
+
+			{/* margin styling when sidebar is present */}
+			{/* <style jsx>{`
+				@media screen and (min-width: calc(${sidebar})) {
+					div {
+						margin-left: auto;
+					}
+				}
+			`}</style> */}
+
+			{/* width styling when sidebar present - two states: open or closed */}
+			{/* <style jsx>{`
+				@media screen and (min-width: calc(${sidebar})) {
+					div {
+						width: calc(100% - ${sidebarWidth});
+					}
+				}
+			`}</style> */}
 		</div>
+		</>
+
 	)
 }

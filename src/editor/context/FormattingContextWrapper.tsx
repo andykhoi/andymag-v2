@@ -31,7 +31,7 @@ interface FormattingContextType {
 		lg: string,
 	}
 	fontFamilies: {
-		[family: string]: NextFontWithVariable
+		[family: string]: NextFont
 		// charter: NextFontWithVariable,
 		// inter: NextFont
 	}
@@ -91,12 +91,12 @@ const charter = localFont({
 			style: 'italic'
 		}
 	],
-	variable: '--font-charter'
+	// variable: '--font-charter'
 })
 
 const defaultFormattingContextValue: FormattingContextType = {
 	defaultPadding: '23px',
-	optimalContentWidth: '65ch',
+	optimalContentWidth: '723px',
 	autoCollapseHeader: false,
 
 	sidebarWidth: '76px',
