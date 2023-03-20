@@ -1,0 +1,4 @@
+{
+  "acceptedFileExtensions": [".js", ".jsx", ".ts", ".tsx", ".json"],
+  "ignoredDirectories": ["node_modules", ".git", ".next"]
+}
