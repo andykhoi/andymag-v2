@@ -1,33 +1,13 @@
-import { Editor } from '@/editor/components/Editor'
+import { useSignUp } from '@clerk/nextjs'
+import { useEffect } from 'react'
+
+import { SignUpForm } from '@/components/SignUpForm'
 
 const Home = () => {
 	return (
-		<Editor>
-			<div>yo major test</div>
-			<div>crazy!!!!</div>
-			<div>yo we are balling heavily</div>
-			<div>yo major test</div>
-			<div>crazy!!!!</div>
-			<div>yo we are balling heavily</div>
-			<div>yo major test</div>
-			<div>crazy!!!!</div>
-			<div>yo we are balling heavily</div>
-			<div>yo major test</div>
-			<div>crazy!!!!</div>
-			<div>yo we are balling heavily</div>
-			<div>yo major test</div>
-			<div>crazy!!!!</div>
-			<div>yo we are balling heavily</div>
-			<div>yo major test</div>
-			<div>crazy!!!!</div>
-			<div>yo we are balling heavily</div>
-			<div>yo major test</div>
-			<div>crazy!!!!</div>
-			<div>yo we are balling heavily</div>
-			<div>yo major test</div>
-			<div>crazy!!!!</div>
-			<div>yo we are balling heavily</div>
-		</Editor>
+		<div>
+			<SignUpForm />
+		</div>
 	)
 }
 

@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/app'
 
-import { UserContextWrapper } from '@/contexts/UserContext'
-
+// import { UserContextWrapper } from '@/contexts/UserContext'
+import { ClerkProvider } from '@clerk/nextjs'
 import { Inter } from '@next/font/google'
 import reset from '../styles/reset'
 
@@ -15,9 +15,10 @@ export const inter = Inter({
 
 export default function App({ Component, pageProps }: AppProps) {
 	return (
-		<UserContextWrapper>
+		// <UserContextWrapper>
+		<>
+		<ClerkProvider {...pageProps} publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_API_KEY}>
 			<main className={`${inter.className}`}>
-				{/* is there a way to include the context of each article have the header / sidebar be global?  */}
 				<Component {...pageProps} /> 
 			</main>
 
@@ -29,6 +30,9 @@ export default function App({ Component, pageProps }: AppProps) {
 					height: 100%;
 				}
 			`}</style>
-		</UserContextWrapper>
+		</ClerkProvider>
+		</>
+		// </UserContextWrapper>
+		
 	)
 }
