@@ -1,29 +1,47 @@
-import { useSignIn } from '@clerk/nextjs'
+import { useSignIn, useSignUp} from '@clerk/nextjs'
+import { useRouter } from 'next/router'
 
 const SignInWithGoogleButton = () => {
-  const { signIn } = useSignIn();
+	const { signIn } = useSignIn()
+	// const { signUp } = useSignUp()
+	const router = useRouter()
 
-  const handleSignInWithGoogle = async () => {
-	if (signIn) {
-		try {
-			await signIn.authenticateWithRedirect({
-				strategy: 'oauth_google',
-				redirectUrl: '/sso-callback',
-				redirectUrlComplete: window.location.pathname, // Redirect to the current URL after completion
-			});
+  	const handleSignInWithGoogle = async () => {
+		if (signIn && router.isReady) {
+			try {
+				await signIn.authenticateWithRedirect({
+					strategy: 'oauth_google',
+					redirectUrl: '/?a=sso-callback',
+					redirectUrlComplete: router.pathname, // Redirect to the current URL after completion
+				});
 			} catch (error) {
-			console.error('Error during sign in with Google:', error);
+				console.error('Error during sign in with Google:', error);
+			}
+		} else {
+			console.log('signIn instance is unavailable')
 		}
-	} else {
-		console.log('signIn instance is unavailable')
-	}
-  };
+		// if (signUp && router.isReady) {
+		// 	try {
+		// 		await signUp.authenticateWithRedirect({
+		// 			strategy: 'oauth_google',
+		// 			redirectUrl: '/sso-callback',
+		// 			// redirectUrl: '/?a=sso-callback',
+		// 			redirectUrlComplete: '/', // Redirect to the current URL after completion
+		// 			unsafeMetadata: {}
+		// 		});
+		// 	} catch (error) {
+		// 		console.error('Error during sign up with Google:', error);
+		// 	}
+		// } else {
+		// 	console.log('signUp instance is unavailable')
+		// }
+	};
 
-  return (
-    <button onClick={handleSignInWithGoogle}>
-      Sign in with Google
-    </button>
-  );
+	return (
+		<button onClick={handleSignInWithGoogle}>
+			Sign in with Google
+		</button>
+	);
 };
 
 export default SignInWithGoogleButton;

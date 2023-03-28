@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app'
-
+import { useRouter } from 'next/router'
 // import { UserContextWrapper } from '@/contexts/UserContext'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Inter } from '@next/font/google'
@@ -14,10 +14,19 @@ export const inter = Inter({
 
 
 export default function App({ Component, pageProps }: AppProps) {
+	const router = useRouter()
 	return (
 		// <UserContextWrapper>
 		<>
-		<ClerkProvider {...pageProps} publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_API_KEY}>
+		<ClerkProvider
+			{...pageProps}
+			publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_API_KEY}
+			navigate={(to) => {
+				if (to === '/?a=sso-callback') router.push(to, undefined, { shallow: true })
+				
+				router.push(to)
+			}}
+		>
 			<main className={`${inter.className}`}>
 				<Component {...pageProps} /> 
 			</main>
