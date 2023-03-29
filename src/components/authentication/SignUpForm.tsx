@@ -1,7 +1,7 @@
 import { ChangeEvent, Dispatch, FC, FormEvent, SetStateAction, useState } from 'react'
 import { useSignUp } from '@clerk/nextjs'
 import { SignUpCreateParams, SignUpResource, CodeVerificationAttemptParam, ClerkAPIError } from '@clerk/types'
-import { Spinner } from './Spinner'
+import { Spinner } from '../Spinner'
 
 export const SignUpForm: FC = () => {
 	const { isLoaded, signUp, setActive } = useSignUp()

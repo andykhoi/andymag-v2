@@ -1,7 +1,8 @@
 import { useSignIn, useSignUp} from '@clerk/nextjs'
 import { useRouter } from 'next/router'
+import { authenticatePaths } from './Authenticate';
 
-const SignInWithGoogleButton = () => {
+export const SignInWithGoogleButton = () => {
 	const { signIn } = useSignIn()
 	// const { signUp } = useSignUp()
 	const router = useRouter()
@@ -11,7 +12,7 @@ const SignInWithGoogleButton = () => {
 			try {
 				await signIn.authenticateWithRedirect({
 					strategy: 'oauth_google',
-					redirectUrl: '/?a=sso-callback',
+					redirectUrl: authenticatePaths.oAuthRedirectUrl,
 					redirectUrlComplete: router.pathname, // Redirect to the current URL after completion
 				});
 			} catch (error) {
@@ -44,4 +45,3 @@ const SignInWithGoogleButton = () => {
 	);
 };
 
-export default SignInWithGoogleButton;

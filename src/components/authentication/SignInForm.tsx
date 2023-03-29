@@ -1,7 +1,7 @@
 import { FC, FormEvent, useState } from 'react'
 import { useSignIn } from '@clerk/nextjs'
 import { SignInCreateParams, SignInResource, ClerkAPIError } from '@clerk/types'
-import { Spinner } from './Spinner'
+import { Spinner } from '../Spinner'
 
 export const SignInForm: FC = () => {
 	const { isLoaded, signIn, setActive } = useSignIn()

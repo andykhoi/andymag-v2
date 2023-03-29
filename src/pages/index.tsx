@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import { Authenticate } from '@/components/Authenticate'
-import { SignUpForm } from '@/components/SignUpForm'
+import { Authenticate } from '@/components/authentication/Authenticate'
+import { SignUpForm } from '@/components/authentication/SignUpForm'
 import { useRouter } from 'next/router'
 import { useUser } from '@clerk/nextjs'
 import { useClerk } from '@clerk/nextjs'
@@ -12,7 +12,7 @@ const Home = () => {
 	// console.log(user)
 	return (
 		<div>
-			<Authenticate />
+			{/* <Authenticate /> */}
 			<button onClick={() => signOut()}>sign out</button>
 		</div>
 	)
