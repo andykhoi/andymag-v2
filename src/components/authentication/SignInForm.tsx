@@ -2,8 +2,11 @@ import { FC, FormEvent, useState } from 'react'
 import { useSignIn } from '@clerk/nextjs'
 import { SignInCreateParams, SignInResource, ClerkAPIError } from '@clerk/types'
 import { Spinner } from '../Spinner'
+import { setAuthMode } from './Authenticate'
+import { useRouter } from 'next/router'
 
 export const SignInForm: FC = () => {
+	const router = useRouter()
 	const { isLoaded, signIn, setActive } = useSignIn()
 
 	const [identifier, setIdentifier] = useState<string>('')
@@ -61,6 +64,7 @@ export const SignInForm: FC = () => {
 
 		if (signInAttempt && signInAttempt.status === 'complete') {
 			setActive({ session: signInAttempt.createdSessionId })
+			setAuthMode(null, router)
 		}
 
 		setLoading(() => false)

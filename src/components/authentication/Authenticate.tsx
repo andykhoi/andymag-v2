@@ -8,6 +8,9 @@ import { SignUpResource, SignInResource } from '@clerk/types'
 
 import { SignInWithGoogleButton } from './SignInWithGoogle'
 import { SignInSignUpButtons } from './SignInSignUpButtons'
+import { OAuthContinueForm } from './OAuthContinueForm'
+import { HandleSSOCallback } from './HandleSSOCallback'
+import { ForgotPasswordForm } from './ForgotPasswordForm'
 
 export type AuthQueryValueType = 'create-account' | 'sign-in' | 'forgot-password' | 'continue-sign-up' | 'sso-callback'
 
@@ -22,6 +25,37 @@ export const authenticatePaths = {
 	forgotPassword: '/?a=forgot-password',
 	continueOAuthSignUp: '/?a=continue-sign-up',
 	oAuthRedirectUrl: '/?a=sso-callback'
+}
+
+export const setAuthMode = (mode: AuthModeType | null, router: NextRouter): AuthQueryValueType | null => {
+	let queryValue: AuthQueryValueType | null;
+	switch (mode) {
+		case 'continueOAuthSignUp':
+			queryValue = 'continue-sign-up'
+			break
+		case 'createAccount':
+			queryValue = 'create-account'
+			break
+		case 'forgotPassword':
+			queryValue = 'forgot-password'
+			break
+		case 'signIn':
+			queryValue = 'sign-in'
+			break
+		case 'oAuthRedirect':
+			queryValue = 'sso-callback'
+			break
+		default:
+			queryValue = null
+	}
+	if (!queryValue) { 
+		router.push(router.pathname, undefined, { shallow: true })
+		return null
+	}
+
+	router.push(`${router.pathname}?a=${queryValue}`, undefined, { shallow: true })
+	
+	return queryValue
 }
 
 export const getAuthMode = (router: NextRouter): AuthModeType | null => {
@@ -49,10 +83,11 @@ export const getAuthMode = (router: NextRouter): AuthModeType | null => {
 	}
 }
 
-const authModeMap: {
+export const authModeMap: {
 	[mode in AuthModeType]: {
 		components: ReactNode[]
 		close: boolean
+		queryValue: string
 		// a mode can be invalid if conditions aren't correct. Check if mode can exist with existing sign in or sign up state, else redirect.
 		check?: (options: {
 			signIn: SignInResource,
@@ -63,21 +98,25 @@ const authModeMap: {
 } = {
 	signIn: {
 		components: [<SignInWithGoogleButton key={'signIn'} />, <SignInSignUpButtons key={'signInSignUpButtons'}/>, <SignInForm key={'signInForm'} /> ],
-		close: true
+		close: true,
+		queryValue: 'sign-in'
 	},
 	createAccount: {
 		components: [<SignInWithGoogleButton key={'signIn'} />, <SignInSignUpButtons key={'signInSignUpButtons'}/>, <SignUpForm key={'signUpForm'} /> ],
-		close: true
+		close: true,
+		queryValue: 'create-account'
 	},
 	// need to develop
 	forgotPassword: {
-		components: [],
-		close: true
+		components: [<ForgotPasswordForm key={'ForgotPasswordForm'} />],
+		close: true,
+		queryValue: 'forgot-password'
 	},
 	// need to develop the components
 	continueOAuthSignUp: {
-		components: [],
+		components: [<OAuthContinueForm key={'OAuthContinueForm'} />],
 		close: false,
+		queryValue: 'continue-sign-up',
 		check: (options) => {
 			const { signUp, redirect } = options
 			const {
@@ -97,27 +136,37 @@ const authModeMap: {
 			redirect()
 		}
 	},
-	// render a loading visual? 
 	oAuthRedirect: {
-		components: [],
-		close: false
+		components: [<OAuthContinueForm key={'OAuthContinueForm'} />],
+		close: false,
+		queryValue: 'sso-callback',
+		check: (options) => {
+			const { signIn: {
+				firstFactorVerification: {
+					strategy
+				}
+			}, redirect } = options
+			
+			if (strategy !== 'oauth_google') redirect()
+		}
 	}
 }
 
 export const Authenticate: FC = () => {
-	const { handleRedirectCallback } = useClerk()
+	// const { handleRedirectCallback } = useClerk()
 	const { isLoaded, signUp } = useSignUp()
 	const { signIn } = useSignIn()
+	const { user } = useUser();
 	const router = useRouter()
 	const mode = getAuthMode(router)
 
-	useEffect(() => {
-		if (!mode || mode !== 'oAuthRedirect') return
+	// useEffect(() => {
+	// 	if (!mode || mode !== 'oAuthRedirect') return
 		
-		handleRedirectCallback({
-			continueSignUpUrl: authenticatePaths.continueOAuthSignUp
-		})
-	}, [mode, handleRedirectCallback])
+	// 	handleRedirectCallback({
+	// 		continueSignUpUrl: authenticatePaths.continueOAuthSignUp
+	// 	})
+	// }, [mode, handleRedirectCallback])
 
 	const renderAuthComponents = () => {
 		if (!mode || !signIn || !signUp || !isLoaded) return null

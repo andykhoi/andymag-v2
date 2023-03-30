@@ -1,6 +1,6 @@
 import { useSignIn, useSignUp} from '@clerk/nextjs'
 import { useRouter } from 'next/router'
-import { authenticatePaths } from './Authenticate';
+import { authenticatePaths, authModeMap } from './Authenticate';
 
 export const SignInWithGoogleButton = () => {
 	const { signIn } = useSignIn()
@@ -12,7 +12,8 @@ export const SignInWithGoogleButton = () => {
 			try {
 				await signIn.authenticateWithRedirect({
 					strategy: 'oauth_google',
-					redirectUrl: authenticatePaths.oAuthRedirectUrl,
+					// redirectUrl: authenticatePaths.oAuthRedirectUrl,
+					redirectUrl: `${router.pathname}?a=${authModeMap.oAuthRedirect.queryValue}`,
 					redirectUrlComplete: router.pathname, // Redirect to the current URL after completion
 				});
 			} catch (error) {
@@ -40,7 +41,7 @@ export const SignInWithGoogleButton = () => {
 
 	return (
 		<button onClick={handleSignInWithGoogle}>
-			Sign in with Google
+			Continue with Google
 		</button>
 	);
 };

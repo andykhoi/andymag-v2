@@ -2,8 +2,12 @@ import { ChangeEvent, Dispatch, FC, FormEvent, SetStateAction, useState } from '
 import { useSignUp } from '@clerk/nextjs'
 import { SignUpCreateParams, SignUpResource, CodeVerificationAttemptParam, ClerkAPIError } from '@clerk/types'
 import { Spinner } from '../Spinner'
+import { setAuthMode } from './Authenticate'
+import { useRouter } from 'next/router'
 
 export const SignUpForm: FC = () => {
+	const router = useRouter()
+
 	const { isLoaded, signUp, setActive } = useSignUp()
 
 	const [emailAddress, setEmailAddress] = useState<string>('')
@@ -210,6 +214,7 @@ export const SignUpForm: FC = () => {
 		// at this point the sign up should be complete
 		if (verifyingEmail && verifyingEmail.status === 'complete') {
 			setActive({ session: verifyingEmail.createdSessionId })
+			setAuthMode(null, router)
 		}
 	
 		setLoading(() => false)
