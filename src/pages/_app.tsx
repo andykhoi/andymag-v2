@@ -11,31 +11,32 @@ import { Authenticate, getAuthMode } from '@/components/authentication/Authentic
 export const inter = Inter({
 	weight: 'variable',
 	subsets: ['latin'],
-	// variable: '--font-inter',
 })
 
 
 export default function App({ Component, pageProps }: AppProps) {
-	const router = useRouter()
-	const authMode = getAuthMode(router)
-	
+	// const router = useRouter()
+	// const authMode = getAuthMode(router)
+
 	return (
-		// <UserContextWrapper>
-		<>
 		<ClerkProvider
 			{...pageProps}
 			publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_API_KEY}
-			// navigate={(to) => {
-			// 	if (to === '/?a=sso-callback') router.push(to, undefined, { shallow: true })
-				
-			// 	router.push(to)
-			// }}
 		>
 			<main className={`${inter.className}`}>
 				<Component {...pageProps} />
-				<SignedOut>
+				{/* <SignedOut>
 					{ authMode && <Authenticate /> }
-				</SignedOut>
+				</SignedOut> */}
+				{/* 
+					potensh could use user context consumer here to conditionally render
+					<Authenticate />, rather than have <Authenticate /> handle its visibility
+					itself. This will also allow for the popup wrapper to wrap <Authenticate />.
+
+					Come back to this once Hasura is hooked up and UserContext has been created.
+					For now leave as is.
+				*/}
+				<Authenticate /> 
 			</main>
 
 			<style jsx global>
@@ -47,8 +48,5 @@ export default function App({ Component, pageProps }: AppProps) {
 				}
 			`}</style>
 		</ClerkProvider>
-		</>
-		// </UserContextWrapper>
-		
 	)
 }

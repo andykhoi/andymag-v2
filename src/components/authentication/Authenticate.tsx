@@ -19,13 +19,13 @@ export type AuthModeType = 'createAccount' | 'signIn' | 'forgotPassword' | 'cont
 export const allAuthQueryValues: AuthQueryValueType[] = ['create-account', 'sign-in', 'forgot-password', 'continue-sign-up', 'sso-callback']
 
 // this will need to change to be shallow routed on all pages - simply append query to current pathname and shallow route
-export const authenticatePaths = {
-	createAccount: '/?a=create-account',
-	signIn: '/?a=sign-in',
-	forgotPassword: '/?a=forgot-password',
-	continueOAuthSignUp: '/?a=continue-sign-up',
-	oAuthRedirectUrl: '/?a=sso-callback'
-}
+// export const authenticatePaths = {
+// 	createAccount: '/?a=create-account',
+// 	signIn: '/?a=sign-in',
+// 	forgotPassword: '/?a=forgot-password',
+// 	continueOAuthSignUp: '/?a=continue-sign-up',
+// 	oAuthRedirectUrl: '/?a=sso-callback'
+// }
 
 export const setAuthMode = (mode: AuthModeType | null, router: NextRouter): AuthQueryValueType | null => {
 	let queryValue: AuthQueryValueType | null;
@@ -89,11 +89,15 @@ export const authModeMap: {
 		close: boolean
 		queryValue: string
 		// a mode can be invalid if conditions aren't correct. Check if mode can exist with existing sign in or sign up state, else redirect.
+		// check?: (options: {
+		// 	signIn: SignInResource,
+		// 	signUp: SignUpResource,
+		// 	redirect: () => void
+		// }) => void
 		check?: (options: {
 			signIn: SignInResource,
 			signUp: SignUpResource,
-			redirect: () => void
-		}) => void
+		}) => boolean
 	}
 } = {
 	signIn: {
@@ -106,19 +110,34 @@ export const authModeMap: {
 		close: true,
 		queryValue: 'create-account'
 	},
-	// need to develop
 	forgotPassword: {
 		components: [<ForgotPasswordForm key={'ForgotPasswordForm'} />],
 		close: true,
 		queryValue: 'forgot-password'
 	},
-	// need to develop the components
 	continueOAuthSignUp: {
 		components: [<OAuthContinueForm key={'OAuthContinueForm'} />],
 		close: false,
 		queryValue: 'continue-sign-up',
+		// check: (options) => {
+		// 	const { signUp, redirect } = options
+		// 	const {
+		// 		missingFields,
+		// 		verifications: {
+		// 			externalAccount: {
+		// 				status,
+		// 				strategy
+		// 			}
+		// 		} 
+		// 	} = signUp
+		// 	if (missingFields.length > 0 && status === 'verified' && strategy === 'oauth_google') {
+		// 		return
+		// 	}
+			
+		// 	redirect()
+		// }
 		check: (options) => {
-			const { signUp, redirect } = options
+			const { signUp } = options
 			const {
 				missingFields,
 				verifications: {
@@ -128,63 +147,101 @@ export const authModeMap: {
 					}
 				} 
 			} = signUp
-
 			if (missingFields.length > 0 && status === 'verified' && strategy === 'oauth_google') {
-				return
+				return true
 			}
-
-			redirect()
+			
+			return false
 		}
 	},
 	oAuthRedirect: {
-		components: [<OAuthContinueForm key={'OAuthContinueForm'} />],
+		components: [<HandleSSOCallback key={'HandleSSOCallback'} /> ],
 		close: false,
 		queryValue: 'sso-callback',
+		// check: (options) => {
+		// 	const { 
+		// 		signUp,
+		// 		signIn,
+		// 		signUp: {
+		// 			missingFields,
+		// 			verifications: {
+		// 				externalAccount: {
+		// 					status,
+		// 					strategy
+		// 				}
+		// 			}
+		// 		}
+		// 	} = options
+		// 	console.log(signUp, signIn, 'check')
+		// 	if (strategy !== 'oauth_google' || status !== 'verified' || missingFields.length === 0) return false
+
+		// 	return true
+		// }
 		check: (options) => {
-			const { signIn: {
-				firstFactorVerification: {
-					strategy
+			const { 
+				signIn: {
+					status,
+					firstFactorVerification: {
+						strategy,
+						status: firstFactorVerificationStatus
+					}
 				}
-			}, redirect } = options
-			
-			if (strategy !== 'oauth_google') redirect()
+			} = options
+	
+			if (strategy !== 'oauth_google' || status !== 'needs_identifier' || firstFactorVerificationStatus !== 'transferable') return false
+
+			return true
 		}
 	}
 }
 
 export const Authenticate: FC = () => {
-	// const { handleRedirectCallback } = useClerk()
 	const { isLoaded, signUp } = useSignUp()
 	const { signIn } = useSignIn()
 	const { user } = useUser();
 	const router = useRouter()
 	const mode = getAuthMode(router)
 
-	// useEffect(() => {
-	// 	if (!mode || mode !== 'oAuthRedirect') return
-		
-	// 	handleRedirectCallback({
-	// 		continueSignUpUrl: authenticatePaths.continueOAuthSignUp
-	// 	})
-	// }, [mode, handleRedirectCallback])
+	// potentially tentative route handling - can potentially remove.
+	useEffect(() => {
+		if (mode && user) {
+			setAuthMode(null, router)
+		}
+	}, [mode, router, user])
 
 	const renderAuthComponents = () => {
-		if (!mode || !signIn || !signUp || !isLoaded) return null
-
+		// if (!mode || !signIn || !signUp || !isLoaded) return null
+		if (!mode || !signIn || !signUp || !isLoaded || user) return null
 		const modeConfig = authModeMap[mode]
 		
 		if (modeConfig.check) {
-			modeConfig.check({
+			// modeConfig.check({
+			// 	signIn, 
+			// 	signUp,
+			// 	redirect: () => router.push(router.pathname, undefined, { shallow: true }) // if mode is invalid set auth mode to null
+			// })
+			// return null
+			const valid = modeConfig.check({
 				signIn, 
 				signUp,
-				redirect: () => router.push(router.pathname, undefined, { shallow: true }) // if mode is invalid set auth mode to null
 			})
+
+			if (!valid) {
+				setAuthMode(null, router)
+				return null
+			}
 		}
 
 		return (
 			<div>
 				{ modeConfig.close && <button>back</button>}
 				{ modeConfig.components.map(c => c) }
+				<style jsx>{`
+					div {
+						width: 420px;
+						background-color: blue;
+					}
+				`}</style>
 			</div>
 		)
 	}

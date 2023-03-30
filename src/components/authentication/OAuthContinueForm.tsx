@@ -3,16 +3,15 @@ import { useRouter } from 'next/router'
 import { useSignUp, useClerk } from '@clerk/nextjs'
 import { SignUpCreateParams, SignUpResource, ClerkAPIError } from '@clerk/types'
 import { Spinner } from '../Spinner'
-import { authenticatePaths, setAuthMode, authModeMap } from './Authenticate'
-import { getAuthMode } from './Authenticate'
+import { setAuthMode, authModeMap, getAuthMode } from './Authenticate'
 
 export const OAuthContinueForm: FC = () => {
 	const router = useRouter()
 	const { isLoaded, signUp, setActive } = useSignUp()
-	const { handleRedirectCallback } = useClerk()
-	const mode = getAuthMode(router)
+	// const { handleRedirectCallback } = useClerk()
+	// const mode = getAuthMode(router)
 
-	const [callbackError, setCallbackError] = useState<string>('')
+	// const [callbackError, setCallbackError] = useState<string>('')
 
 	const [username, setUsername] = useState<string>('')
 	const [usernameError, setUsernameError] = useState<string>('')
@@ -58,30 +57,30 @@ export const OAuthContinueForm: FC = () => {
 		setLoading(() => false)
 	}
 
-	const tryHandleRedirectCallback = async () => {
-		setLoading(() => true)
+	// useEffect(() => {
+	// 	if (mode !== 'oAuthRedirect') return
 
-		try {
-			await handleRedirectCallback({
-				// continueSignUpUrl: authenticatePaths.continueOAuthSignUp
-				continueSignUpUrl: `${router.pathname}?a=${authModeMap.continueOAuthSignUp.queryValue}`
-			})
-		} catch (e) {
-			const errors = (e as any).errors as ClerkAPIError[]
-			setCallbackError(() => errors.map(err => err.message).join(', '))
-		}
-
-		setLoading(() => false)
-	}
-
-	useEffect(() => {
-		tryHandleRedirectCallback()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	// 	const tryHandleRedirectCallback = async () => {
+	// 		setLoading(() => true)
+	
+	// 		try {
+	// 			await handleRedirectCallback({
+	// 				continueSignUpUrl: `${router.pathname}?a=${authModeMap.continueOAuthSignUp.queryValue}`
+	// 			})
+	// 		} catch (e) {
+	// 			const errors = (e as any).errors as ClerkAPIError[]
+	// 			setCallbackError(() => errors.map(err => err.message).join(', '))
+	// 		}
+	
+	// 		setLoading(() => false)
+	// 	}
+	// 	tryHandleRedirectCallback()
+		
+	// }, [mode, handleRedirectCallback, router.pathname])
 
 	return (
 		<>
-			{
+			{/* {
 				mode === 'oAuthRedirect' && 
 				<div>
 					<p>Preparing your account</p>
@@ -110,7 +109,27 @@ export const OAuthContinueForm: FC = () => {
 						</div>
 					</button>
 				</form>
-			}	
+			}	 */}
+			<form onSubmit={onCompleteHandler}>
+				<div>
+					<input
+						placeholder='Username'
+						type='text'
+						value={username}
+						onChange={e => {
+							setUsername(e.target.value)
+							setUsernameError(() => '')
+						}}
+						required
+					/>
+					{ usernameError && <p>{usernameError}</p> }
+				</div>
+				<button type='submit'>
+					<div>
+						{ loading ?  <Spinner /> : 'Complete' }
+					</div>
+				</button>
+			</form>
 		</>
 		
 	)

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useSignIn } from "@clerk/nextjs";
 import { EmailCodeFactor, SignInCreateParams, SignInResource, ClerkAPIError, PrepareFirstFactorParams, AttemptFirstFactorParams } from '@clerk/types'
 import Link from 'next/link'
-import { authenticatePaths, setAuthMode } from './Authenticate';
+import { authModeMap, setAuthMode } from './Authenticate';
 
 export const ForgotPasswordForm: FC = () => {
 	const router = useRouter();
@@ -194,7 +194,7 @@ export const ForgotPasswordForm: FC = () => {
 					</button>
 				</form>
 			}
-			<Link href={`${authenticatePaths.signIn}`} shallow>Sign in or sign up</Link>
+			<Link href={`${authModeMap.signIn.queryValue}`} shallow>Sign in or sign up</Link>
 		</div>
 	);
 }

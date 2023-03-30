@@ -1,6 +1,9 @@
 import { useSignIn, useSignUp} from '@clerk/nextjs'
 import { useRouter } from 'next/router'
-import { authenticatePaths, authModeMap } from './Authenticate';
+import {
+	// authenticatePaths,
+	authModeMap
+} from './Authenticate';
 
 export const SignInWithGoogleButton = () => {
 	const { signIn } = useSignIn()
