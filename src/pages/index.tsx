@@ -11,7 +11,6 @@ const Home = () => {
 	const { signUp } = useSignUp()
 	const { signIn } = useSignIn()
 	
-	console.log(signUp, signIn, 'index')
 	return (
 		<div>
 			<button onClick={() => signOut()}>sign out</button>

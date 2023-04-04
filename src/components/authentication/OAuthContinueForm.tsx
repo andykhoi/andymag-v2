@@ -57,80 +57,26 @@ export const OAuthContinueForm: FC = () => {
 		setLoading(() => false)
 	}
 
-	// useEffect(() => {
-	// 	if (mode !== 'oAuthRedirect') return
-
-	// 	const tryHandleRedirectCallback = async () => {
-	// 		setLoading(() => true)
-	
-	// 		try {
-	// 			await handleRedirectCallback({
-	// 				continueSignUpUrl: `${router.pathname}?a=${authModeMap.continueOAuthSignUp.queryValue}`
-	// 			})
-	// 		} catch (e) {
-	// 			const errors = (e as any).errors as ClerkAPIError[]
-	// 			setCallbackError(() => errors.map(err => err.message).join(', '))
-	// 		}
-	
-	// 		setLoading(() => false)
-	// 	}
-	// 	tryHandleRedirectCallback()
-		
-	// }, [mode, handleRedirectCallback, router.pathname])
-
 	return (
-		<>
-			{/* {
-				mode === 'oAuthRedirect' && 
+		<form onSubmit={onCompleteHandler}>
+			<div>
+				<input
+					placeholder='Username'
+					type='text'
+					value={username}
+					onChange={e => {
+						setUsername(e.target.value)
+						setUsernameError(() => '')
+					}}
+					required
+				/>
+				{ usernameError && <p>{usernameError}</p> }
+			</div>
+			<button type='submit'>
 				<div>
-					<p>Preparing your account</p>
-					{ callbackError ? <p>{ callbackError }</p> : <Spinner /> }
+					{ loading ?  <Spinner /> : 'Complete' }
 				</div>
-			}
-			{
-				mode === 'continueOAuthSignUp' &&
-				<form onSubmit={onCompleteHandler}>
-					<div>
-						<input
-							placeholder='Username'
-							type='text'
-							value={username}
-							onChange={e => {
-								setUsername(e.target.value)
-								setUsernameError(() => '')
-							}}
-							required
-						/>
-						{ usernameError && <p>{usernameError}</p> }
-					</div>
-					<button type='submit'>
-						<div>
-							{ loading ?  <Spinner /> : 'Complete' }
-						</div>
-					</button>
-				</form>
-			}	 */}
-			<form onSubmit={onCompleteHandler}>
-				<div>
-					<input
-						placeholder='Username'
-						type='text'
-						value={username}
-						onChange={e => {
-							setUsername(e.target.value)
-							setUsernameError(() => '')
-						}}
-						required
-					/>
-					{ usernameError && <p>{usernameError}</p> }
-				</div>
-				<button type='submit'>
-					<div>
-						{ loading ?  <Spinner /> : 'Complete' }
-					</div>
-				</button>
-			</form>
-		</>
-		
+			</button>
+		</form>
 	)
 }

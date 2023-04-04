@@ -1,14 +1,14 @@
 import { useRouter } from 'next/router'
-import { authenticatePaths, authModeMap } from './Authenticate'
+import {
+	authModeMap
+} from './Authenticate'
 
 export const SignInSignUpButtons = () => {
 	const router = useRouter()
 
 	return (
 		<div>
-			{/* <button className={router.query.a === 'sign-in' ? 'active' : ''} onClick={() => router.push(authenticatePaths.signIn, undefined, { shallow: true })}>Sign in</button> */}
 			<button className={router.query.a === 'sign-in' ? 'active' : ''} onClick={() => router.push(`${router.pathname}?a=${authModeMap.signIn.queryValue}`, undefined, { shallow: true })}>Sign in</button>
-			{/* <button className={router.query.a === 'create-account' ? 'active' : ''} onClick={() => router.push(authenticatePaths.createAccount, undefined, { shallow: true })}>Create account</button> */}
 			<button className={router.query.a === 'create-account' ? 'active' : ''} onClick={() => router.push(`${router.pathname}?a=${authModeMap.createAccount.queryValue}`, undefined, { shallow: true })}>Create account</button>
 			<style jsx>{`
 				button {

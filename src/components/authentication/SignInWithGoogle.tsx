@@ -25,21 +25,6 @@ export const SignInWithGoogleButton = () => {
 		} else {
 			console.log('signIn instance is unavailable')
 		}
-		// if (signUp && router.isReady) {
-		// 	try {
-		// 		await signUp.authenticateWithRedirect({
-		// 			strategy: 'oauth_google',
-		// 			redirectUrl: '/sso-callback',
-		// 			// redirectUrl: '/?a=sso-callback',
-		// 			redirectUrlComplete: '/', // Redirect to the current URL after completion
-		// 			unsafeMetadata: {}
-		// 		});
-		// 	} catch (error) {
-		// 		console.error('Error during sign up with Google:', error);
-		// 	}
-		// } else {
-		// 	console.log('signUp instance is unavailable')
-		// }
 	};
 
 	return (

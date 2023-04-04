@@ -4,6 +4,7 @@ import { useSignIn } from "@clerk/nextjs";
 import { EmailCodeFactor, SignInCreateParams, SignInResource, ClerkAPIError, PrepareFirstFactorParams, AttemptFirstFactorParams } from '@clerk/types'
 import Link from 'next/link'
 import { authModeMap, setAuthMode } from './Authenticate';
+import { Spinner } from '../Spinner';
 
 export const ForgotPasswordForm: FC = () => {
 	const router = useRouter();
@@ -168,8 +169,10 @@ export const ForgotPasswordForm: FC = () => {
 						{ codeCopy && <p>{ codeCopy }</p>}
 						{ codeError && <p>{ codeError }</p>}
 					</div>
-					<button type="submit">
-						Sign in
+					<button type='submit'>
+						<div>
+							{ loading ?  <Spinner /> : 'Sign in' }
+						</div>
 					</button>
 				</form>
 			}
@@ -189,8 +192,10 @@ export const ForgotPasswordForm: FC = () => {
 						/>
 						{ identifierError && <p>{ identifierError }</p>}
 					</div>
-					<button type="submit">
-						Send code
+					<button type='submit'>
+						<div>
+							{ loading ?  <Spinner /> : 'Send code' }
+						</div>
 					</button>
 				</form>
 			}

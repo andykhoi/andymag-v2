@@ -18,15 +18,6 @@ export type AuthModeType = 'createAccount' | 'signIn' | 'forgotPassword' | 'cont
 
 export const allAuthQueryValues: AuthQueryValueType[] = ['create-account', 'sign-in', 'forgot-password', 'continue-sign-up', 'sso-callback']
 
-// this will need to change to be shallow routed on all pages - simply append query to current pathname and shallow route
-// export const authenticatePaths = {
-// 	createAccount: '/?a=create-account',
-// 	signIn: '/?a=sign-in',
-// 	forgotPassword: '/?a=forgot-password',
-// 	continueOAuthSignUp: '/?a=continue-sign-up',
-// 	oAuthRedirectUrl: '/?a=sso-callback'
-// }
-
 export const setAuthMode = (mode: AuthModeType | null, router: NextRouter): AuthQueryValueType | null => {
 	let queryValue: AuthQueryValueType | null;
 	switch (mode) {
@@ -89,11 +80,6 @@ export const authModeMap: {
 		close: boolean
 		queryValue: string
 		// a mode can be invalid if conditions aren't correct. Check if mode can exist with existing sign in or sign up state, else redirect.
-		// check?: (options: {
-		// 	signIn: SignInResource,
-		// 	signUp: SignUpResource,
-		// 	redirect: () => void
-		// }) => void
 		check?: (options: {
 			signIn: SignInResource,
 			signUp: SignUpResource,
@@ -119,23 +105,6 @@ export const authModeMap: {
 		components: [<OAuthContinueForm key={'OAuthContinueForm'} />],
 		close: false,
 		queryValue: 'continue-sign-up',
-		// check: (options) => {
-		// 	const { signUp, redirect } = options
-		// 	const {
-		// 		missingFields,
-		// 		verifications: {
-		// 			externalAccount: {
-		// 				status,
-		// 				strategy
-		// 			}
-		// 		} 
-		// 	} = signUp
-		// 	if (missingFields.length > 0 && status === 'verified' && strategy === 'oauth_google') {
-		// 		return
-		// 	}
-			
-		// 	redirect()
-		// }
 		check: (options) => {
 			const { signUp } = options
 			const {
@@ -158,25 +127,6 @@ export const authModeMap: {
 		components: [<HandleSSOCallback key={'HandleSSOCallback'} /> ],
 		close: false,
 		queryValue: 'sso-callback',
-		// check: (options) => {
-		// 	const { 
-		// 		signUp,
-		// 		signIn,
-		// 		signUp: {
-		// 			missingFields,
-		// 			verifications: {
-		// 				externalAccount: {
-		// 					status,
-		// 					strategy
-		// 				}
-		// 			}
-		// 		}
-		// 	} = options
-		// 	console.log(signUp, signIn, 'check')
-		// 	if (strategy !== 'oauth_google' || status !== 'verified' || missingFields.length === 0) return false
-
-		// 	return true
-		// }
 		check: (options) => {
 			const { 
 				signIn: {
@@ -210,17 +160,10 @@ export const Authenticate: FC = () => {
 	}, [mode, router, user])
 
 	const renderAuthComponents = () => {
-		// if (!mode || !signIn || !signUp || !isLoaded) return null
 		if (!mode || !signIn || !signUp || !isLoaded || user) return null
 		const modeConfig = authModeMap[mode]
 		
 		if (modeConfig.check) {
-			// modeConfig.check({
-			// 	signIn, 
-			// 	signUp,
-			// 	redirect: () => router.push(router.pathname, undefined, { shallow: true }) // if mode is invalid set auth mode to null
-			// })
-			// return null
 			const valid = modeConfig.check({
 				signIn, 
 				signUp,
