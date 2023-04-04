@@ -2,18 +2,18 @@
 
 # dependencies
 node_modules
-/.pnp
+/app/.pnp
 .pnp.js
 
 # testing
 /coverage
 
 # next.js
-/.next/
-/out/
+app/.next/
+app/out/
 
 # production
-/build
+/app/build
 
 # misc
 .DS_Store
@@ -34,3 +34,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.eslintrc.json
+
+# functions
+/functions/.build
+/functions/.serverless
+/functions/.env
+/functions/serverless.yml
+
+
