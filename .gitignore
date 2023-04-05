@@ -39,7 +39,8 @@ next-env.d.ts
 # functions
 /functions/.build
 /functions/.serverless
-/functions/.env
+/functions/.env*
 /functions/serverless.yml
+/functions/codegen.yml
 
 

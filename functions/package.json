@@ -5,10 +5,15 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.1349.0"
+    "@clerk/clerk-sdk-node": "^4.8.1",
+    "graphql-request": "^5.2.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^3.3.0",
+    "@graphql-codegen/typescript": "^3.0.3",
+    "@graphql-codegen/typescript-operations": "^3.0.3",
     "@types/aws-lambda": "^8.10.114",
+    "@types/node": "^18.15.11",
     "serverless": "^3.29.0",
     "serverless-offline": "^12.0.4",
     "serverless-plugin-typescript": "^2.1.4",
