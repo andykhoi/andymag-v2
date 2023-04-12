@@ -5,9 +5,9 @@ interface Variables {
 }
 
 export const sendMutation = async (query: RequestDocument, variables: Variables): Promise<any> => {
-  const endpoint = process.env.HASURA_GRAPHQL_ENDPOINT
+  const endpoint = process.env.HASURA_GRAPHQL_ENDPOINT as string
   const headers = {
-    'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET
+    'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET as string
   };
 
   try {

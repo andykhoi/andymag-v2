@@ -4,18 +4,28 @@
   "description": "AWS Lambda Directory",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "codegen": "DOTENV_CONFIG_PATH=\"./.env.dev\" graphql-codegen --require dotenv/config --config codegen.ts",
+	"dev": "serverless deploy --stage dev"
+  },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.8.1",
     "graphql-request": "^5.2.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^3.3.0",
+    "@graphql-codegen/introspection": "^3.0.1",
+    "@graphql-codegen/named-operations-object": "^2.3.1",
+    "@graphql-codegen/near-operation-file-preset": "^2.5.0",
     "@graphql-codegen/typescript": "^3.0.3",
     "@graphql-codegen/typescript-operations": "^3.0.3",
     "@types/aws-lambda": "^8.10.114",
     "@types/node": "^18.15.11",
+    "dotenv": "^16.0.3",
+    "graphql": "^16.6.0",
     "serverless": "^3.29.0",
     "serverless-offline": "^12.0.4",
+    "serverless-plugin-optimize": "^4.2.1-rc.1",
     "serverless-plugin-typescript": "^2.1.4",
     "typescript": "^5.0.3"
   }

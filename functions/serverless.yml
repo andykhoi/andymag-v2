@@ -1,0 +1,29 @@
+service: functions
+
+frameworkVersion: '3'
+useDotenv: true
+
+package:
+  individually: true
+  include:
+    - graphql/**/*.graphql
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: us-west-1
+
+functions:
+  handleNewClerkUser:
+    handler: manageUsers/index.handleClerkNewUser
+
+plugins:
+  # - serverless-webpack
+  - serverless-plugin-typescript
+  # - serverless-plugin-optimize
+  - serverless-offline
+
+# custom: 
+#   webpack:
+#     webpackConfig: 'webpack.config.js'
+

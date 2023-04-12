@@ -1,0 +1,52 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Update this to the branch you want to trigger the pipeline from
+
+jobs:
+  migrate-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name : install curl
+        run : sudo apt-get update && sudo apt-get install -y curl
+        
+      - name : install hasura cli
+        run: curl -L https://github.com/hasura/graphql-engine/raw/stable/cli/get.sh | bash
+
+      # - name: Install dependencies
+      #   run: yarn install --frozen-lockfile
+
+      # - name: Run tests
+      #   run: npm test
+
+      # - name: Deploy Next.js app to Vercel
+      #   run: |
+      #     npm install -g vercel
+      #     vercel --token ${{ secrets.VERCEL_TOKEN }} --prod
+
+      - name: Apply migrations and metadata
+        run: |
+          cd hasura
+          hasura migrate apply --endpoint ${{ secrets.PRODUCTION_HASURA_ENDPOINT }} --admin-secret ${{ secrets.PRODUCTION_HASURA_ADMIN_SECRET }}
+          hasura metadata apply --endpoint ${{ secrets.PRODUCTION_HASURA_ENDPOINT }} --admin-secret ${{ secrets.PRODUCTION_HASURA_ADMIN_SECRET }}
+
+      # - name: Deploy Lambda function
+      #   run: |
+      #     cd path/to/lambda
+      #     npm install
+      #     npm run build
+      #     aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws configure set default.region ${{ secrets.AWS_REGION }}
+      #     aws lambda update-function-code --function-name your_lambda_function_name --zip-file fileb://function.zip

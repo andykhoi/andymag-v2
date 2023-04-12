@@ -36,11 +36,17 @@ yarn-error.log*
 next-env.d.ts
 .eslintrc.json
 
+# packages
+/**/.env*
+
 # functions
 /functions/.build
 /functions/.serverless
-/functions/.env*
-/functions/serverless.yml
-/functions/codegen.yml
+# /functions/.env*
+# /functions/serverless.yml
+# /functions/codegen.yml
 
+# hasura
+/packages/hasura/config.yaml
+# /hasura/.env*
 
