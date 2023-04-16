@@ -15,7 +15,7 @@ const config: CodegenConfig = {
 	}
 	],
 	generates: {
-		"../../types/types.ts": {
+		"../types/schema.ts": {
 			plugins: ["typescript"]
 		},
 		// "../../types/functions/operations.ts": {
@@ -27,13 +27,13 @@ const config: CodegenConfig = {
 		// "../../types/functions/mutations.ts": {
 		// 	plugins: ["typescript", "typescript-operations"]	
 		// }
-		"../../types/": {
+		"../types/": {
 			// documents: './graphql/mutations/*.graphql',
 			plugins: ["typescript-operations"],
 			preset: "near-operation-file",
 			presetConfig: {
 				extension: '.gql.d.ts',
-				baseTypesPath: 'types.ts'
+				baseTypesPath: 'schema.ts'
 			},
 			config: {
 				addOperationExport: true

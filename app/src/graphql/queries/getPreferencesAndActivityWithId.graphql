@@ -1,0 +1,6 @@
+query GetPreferencesAndActivityWithId($id: uuid!) {
+	users(where: {id: {_eq: $id}}) {
+    	activity
+    	preferences
+	}
+}

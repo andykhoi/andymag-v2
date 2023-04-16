@@ -125,6 +125,7 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
 		updateActivity,
 		updatePreferences
 	}
+
 	return (
 		<UserContext.Provider value={store}>
 			{ children }
