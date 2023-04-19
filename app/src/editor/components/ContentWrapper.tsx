@@ -11,19 +11,19 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 }) => {
 	return (
 		<>
-		<div>
-			<Font>
-				<Grid>
-					{ children }
-				</Grid>
-			</Font>
-		</div>
-		<style jsx>{`
-			div {
-				flex: 1;
-				overflow-y: scroll;
-			}
-		`}</style>
+			<div>
+				<Font>
+					<Grid>
+						{ children }
+					</Grid>
+				</Font>
+			</div>
+			<style jsx>{`
+				div {
+					flex: 1;
+					overflow-y: scroll;
+				}
+			`}</style>
 		</>
 	)
 }
