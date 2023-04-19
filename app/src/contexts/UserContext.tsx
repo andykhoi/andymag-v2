@@ -126,6 +126,43 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
 	useEffect(() => {
 		if (!isLoaded) return
 
+		const pollUserData = async (id: string): Promise<GetPreferencesAndActivityWithIdQuery> => {
+			let tries = 0
+			const maxTries = 5
+			
+			return new Promise(async (resolve, reject) => {
+				const poll = async () => {
+					tries++
+				
+					try {
+						const { data } = await getUserData({ variables: { id }, fetchPolicy: 'network-only' })
+						if (data?.users[0]) {
+							resolve(data)
+							return true
+						} else if (tries >= maxTries) {
+							// need better error handling
+							reject(new Error(`Polling stopped after ${maxTries} tries.`))
+							return false
+						}
+					} catch (error) {
+						reject(error)
+						return false
+					}
+					
+					return false
+				}
+			
+				const attemptPolling = async () => {
+					const result = await poll()
+					if (!result && tries < maxTries) {
+						setTimeout(attemptPolling, 1500)
+					}
+				}
+			
+				attemptPolling()
+			})
+		}
+		
 		const getData = async () => {
 			let data: EnrichedUserData = {
 				activity: [],
@@ -140,44 +177,7 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
 				data = anonData ? anonData : initAnonData()
 			} else {
 				// if the user is new it will take some time for the webhook to populate hasura with the new user data
-				const pollUserData = async (): Promise<GetPreferencesAndActivityWithIdQuery> => {
-					let tries = 0
-					const maxTries = 5
-					
-					return new Promise(async (resolve, reject) => {
-						const poll = async () => {
-							tries++
-						
-							try {
-								const { data } = await getUserData({ variables: { id }, fetchPolicy: 'cache-first' })
-								if (data?.users[0]) {
-									resolve(data)
-									return true
-								} else if (tries >= maxTries) {
-									// need better error handling
-									reject(new Error(`Polling stopped after ${maxTries} tries.`))
-									return false
-								}
-							} catch (error) {
-								reject(error)
-								return false
-							}
-							
-							return false
-						}
-					
-						const attemptPolling = async () => {
-							const result = await poll()
-							if (!result && tries < maxTries) {
-								setTimeout(attemptPolling, 1500)
-							}
-						}
-					
-						attemptPolling()
-					})
-				}
-				  
-				const userData = await pollUserData()
+				const userData = await pollUserData(id)
 
 				data.activity = userData?.users[0].activity
 				data.preferences = userData?.users[0].preferences
