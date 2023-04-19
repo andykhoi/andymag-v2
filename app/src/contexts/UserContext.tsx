@@ -1,11 +1,12 @@
 import { FC, createContext, useState, useCallback, useEffect, useRef, ReactNode, useContext } from 'react'
 import { UserResource } from '@clerk/types'
 import { useUser } from '@clerk/nextjs'
-import { Users } from '../../../types/types'
+import { Users } from '../types/schema'
 import { getAnonData, setAnonData, initAnonData } from '@/utils/localStorage'
-import { Activity, Preferences } from '../../../types/custom'
-// import { GraphQLClient, gql } from 'graphql-request'
-
+import { Activity, Preferences } from '../types/custom'
+import { useGetPreferencesAndActivityWithIdLazyQuery, GetPreferencesAndActivityWithIdQuery } from '@/graphql/queries/getPreferencesAndActivityWithId'
+import { useUpdateUserActivityMutation } from '@/graphql/mutations/updateUserActivity'
+import { useUpdateUserPreferencesMutation } from '@/graphql/mutations/updateUserPreferences'
 
 export interface EnrichedUserData {
 	activity: Activity[]
@@ -17,8 +18,6 @@ interface UserContextProviderProps {
 }
 
 interface UserContextType {
-	// activity: Pick<Users, 'activity'> | null
-	// preferences: Pick<Users, 'preferences'> | null
 	activity: Activity[] | null
 	preferences: Preferences | null
 	isLoading: boolean
@@ -45,20 +44,21 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
 		isLoaded,
 		user,
 	} = useUser()
-
 	const id = user?.id
 
-	// const [activity, setActivity] = useState<Pick<Users, 'activity'> | null>(defaultUserContextValue.activity)
-	// const [preferences, setPreferences] = useState<Pick<Users, 'preferences'> | null>(defaultUserContextValue.preferences)
 	const [activity, setActivity] = useState<Activity[] | null>(defaultUserContextValue.activity)
 	const [preferences, setPreferences] = useState<Preferences | null>(defaultUserContextValue.preferences)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 
-	const updateActivity = useCallback((activity: Activity) => {
+	const [ getUserData, ] = useGetPreferencesAndActivityWithIdLazyQuery()
+	const [ updateUserActivity, ] = useUpdateUserActivityMutation()
+	const [ updateUserPreferences, ] = useUpdateUserPreferencesMutation()
+
+	const updateActivity = useCallback(async (activity: Activity) => {
 		if (!id) {
 			// update localStorage
 			const old = getAnonData()
-			let updated;
+			let updated
 			if (!old) {
 				const initialized = initAnonData()
 				updated = {...initialized, activity: [activity] }
@@ -72,20 +72,29 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
 			if (didUpdate) {
 				setActivity(didUpdate.activity)
 			}
-		}
-		// update user's hasura data
-	}, [id])
+		} else {
+			// update user's hasura data
+			const { data } = await updateUserActivity({ variables: {
+				id,
+				activity
+			}})
 
-	const updatePreferences = useCallback((preference: Partial<Preferences>) => {
+			const didUpdate = data?.update_users?.returning[0]
+			if (didUpdate) {
+				setActivity(didUpdate.activity)
+			}
+		}
+	}, [id, updateUserActivity])
+
+	const updatePreferences = useCallback(async (preference: Partial<Preferences>) => {
 		if (!id) {
 			// update localStorage
 			const old = getAnonData()
-			let updated;
+			let updated
 			if (!old) {
 				const initialized = initAnonData()
 				updated = {...initialized, preferences: {...initialized.preferences, ...preference}}
 			} else {
-			
 				updated = { ...old, preferences: {...old.preferences, ...preference }}
 			}
 			
@@ -94,28 +103,102 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
 			if (didUpdate) {
 				setPreferences(didUpdate.preferences)
 			}
+		} else {
+			// update user's hasura data
+			const updated = {
+				...preferences,
+				...preference
+			}
+			const { data } = await updateUserPreferences({
+				variables: {
+					id,
+					preferences: updated
+				}
+			})
+
+			const didUpdate = data?.update_users?.returning[0]
+			if (didUpdate) {
+				setPreferences(didUpdate.preferences)
+			}
 		}
-		// update user's hasura data
-	}, [id])
+	}, [id, preferences, updateUserPreferences])
 
 	useEffect(() => {
 		if (!isLoaded) return
-		
-		setIsLoading(() => true)
-		let data: EnrichedUserData;
 
-		if (!id) {
-			// data = getAnonData() ? getAnonData() : initAnonData()
-			const anonData = getAnonData()
-			data = anonData ? anonData : initAnonData()
-		} else {
-			// data = await getUserData()
+		const getData = async () => {
+			let data: EnrichedUserData = {
+				activity: [],
+				preferences: {
+					autoCollapseHeader: false,
+					fontSize: 'md'
+				}
+			}
+			
+			if (!id) {
+				const anonData = getAnonData()
+				data = anonData ? anonData : initAnonData()
+			} else {
+				// if the user is new it will take some time for the webhook to populate hasura with the new user data
+				const pollUserData = async (): Promise<GetPreferencesAndActivityWithIdQuery> => {
+					let tries = 0
+					const maxTries = 5
+					
+					return new Promise(async (resolve, reject) => {
+						const poll = async () => {
+							tries++
+						
+							try {
+								const { data } = await getUserData({ variables: { id }, fetchPolicy: 'cache-first' })
+								if (data?.users[0]) {
+									resolve(data)
+									return true
+								} else if (tries >= maxTries) {
+									// need better error handling
+									reject(new Error(`Polling stopped after ${maxTries} tries.`))
+									return false
+								}
+							} catch (error) {
+								reject(error)
+								return false
+							}
+							
+							return false
+						}
+					
+						const attemptPolling = async () => {
+							const result = await poll()
+							if (!result && tries < maxTries) {
+								setTimeout(attemptPolling, 1500)
+							}
+						}
+					
+						attemptPolling()
+					})
+				}
+				  
+				const userData = await pollUserData()
+
+				data.activity = userData?.users[0].activity
+				data.preferences = userData?.users[0].preferences
+			}
+
+			return data
+		}
+	
+		const init = async () => {
+			setIsLoading(() => true)
+			
+			const userData = await getData()
+			
+			setPreferences(() => userData.preferences)
+			setActivity(() => userData.activity)
+			setIsLoading(() => false)
 		}
 
-		setPreferences(() => data.preferences)
-		setActivity(() => data.activity)
-		setIsLoading(() => false)
-	}, [isLoaded, id])
+		init()
+
+	}, [isLoaded, id, getUserData])
 
 	const store = {
 		activity,

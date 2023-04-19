@@ -1,4 +1,4 @@
-import { Users } from '../../../types/types'
+import { Users } from '../types/schema'
 import { Activity, Preferences } from '../../../types/custom'
 import { EnrichedUserData } from '@/contexts/UserContext'
 

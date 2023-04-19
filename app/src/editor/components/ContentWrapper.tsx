@@ -25,6 +25,5 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 			}
 		`}</style>
 		</>
-		
 	)
 }

@@ -1,8 +1,10 @@
+import * as Types from '../../types/schema';
+
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
-export type GetPreferencesAndActivityWithIdQueryVariables = Exact<{
-  id: Scalars['uuid'];
+export type GetPreferencesAndActivityWithIdQueryVariables = Types.Exact<{
+  id: Types.Scalars['String'];
 }>;
 
 
@@ -10,8 +12,8 @@ export type GetPreferencesAndActivityWithIdQuery = { __typename?: 'query_root', 
 
 
 export const GetPreferencesAndActivityWithIdDocument = gql`
-    query GetPreferencesAndActivityWithId($id: uuid!) {
-  users(where: {id: {_eq: $id}}) {
+    query GetPreferencesAndActivityWithId($id: String!) {
+  users(where: {auth_id: {_eq: $id}}) {
     activity
     preferences
   }

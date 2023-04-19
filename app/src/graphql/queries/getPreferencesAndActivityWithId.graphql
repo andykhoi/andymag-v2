@@ -1,5 +1,5 @@
-query GetPreferencesAndActivityWithId($id: uuid!) {
-	users(where: {id: {_eq: $id}}) {
+query GetPreferencesAndActivityWithId($id: String!) {
+	users(where: {auth_id: {_eq: $id}}) {
     	activity
     	preferences
 	}

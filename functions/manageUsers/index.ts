@@ -2,7 +2,8 @@ import { APIGatewayProxyEvent } from 'aws-lambda'
 import { request, gql } from 'graphql-request'
 import { Clerk } from '@clerk/clerk-sdk-node'
 import { readFileSync } from 'fs'
-import { InsertUserMutation } from '../graphql/mutations/insertUserMutation.gql'
+import { InsertUserMutation } from '../graphql/mutations/insertUserMutation'
+// import { InsertUserMutation } from '../graphql/mutations/insertUserMutation.gql'
 
 const insertUserMutation = gql`${readFileSync(require.resolve('../graphql/mutations/insertUserMutation.graphql')).toString('utf-8')}`
 

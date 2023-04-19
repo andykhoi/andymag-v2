@@ -7,6 +7,7 @@ import reset from '../styles/reset'
 
 import { Authenticate, getAuthMode } from '@/components/authentication/Authenticate'
 import { UserContextProvider } from '@/contexts/UserContext'
+import { ApolloProviderWithClerk } from '@/contexts/ApolloProviderWithClerk'
 
 // default font across website
 export const inter = Inter({
@@ -24,32 +25,34 @@ export default function App({ Component, pageProps }: AppProps) {
 			{...pageProps}
 			publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_API_KEY}
 		>
-			<UserContextProvider>
-				<main className={`${inter.className}`}>
-					<Component {...pageProps} />
-					{/* <SignedOut>
-						{ authMode && <Authenticate /> }
-					</SignedOut> */}
-					{/* 
-						potensh could use user context consumer here to conditionally render
-						<Authenticate />, rather than have <Authenticate /> handle its visibility
-						itself. This will also allow for the popup wrapper to wrap <Authenticate />.
+			<ApolloProviderWithClerk>
+				<UserContextProvider>
+					<main className={`${inter.className}`}>
+						<Component {...pageProps} />
+						{/* <SignedOut>
+							{ authMode && <Authenticate /> }
+						</SignedOut> */}
+						{/* 
+							potensh could use user context consumer here to conditionally render
+							<Authenticate />, rather than have <Authenticate /> handle its visibility
+							itself. This will also allow for the popup wrapper to wrap <Authenticate />.
 
-						Come back to this once Hasura is hooked up and UserContext has been created.
-						For now leave as is.
-					*/}
-					<Authenticate /> 
-				</main>
+							Come back to this once Hasura is hooked up and UserContext has been created.
+							For now leave as is.
+						*/}
+						<Authenticate /> 
+					</main>
 
-				<style jsx global>
-					{ reset }
-				</style>
-				<style jsx>{`
-					main {
-						height: 100%;
-					}
-				`}</style>
-			</UserContextProvider>
+					<style jsx global>
+						{ reset }
+					</style>
+					<style jsx>{`
+						main {
+							height: 100%;
+						}
+					`}</style>
+				</UserContextProvider>
+			</ApolloProviderWithClerk>
 		</ClerkProvider>
 	)
 }

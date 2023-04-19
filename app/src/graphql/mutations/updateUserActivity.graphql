@@ -1,0 +1,7 @@
+mutation UpdateUserActivity($id: String!, $activity: jsonb!) {
+  update_users(where: {auth_id: {_eq: $id}}, _append: {activity: $activity}) {
+    returning {
+      activity
+    }
+  }
+}

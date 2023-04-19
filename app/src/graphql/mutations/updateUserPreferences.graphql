@@ -1,0 +1,7 @@
+mutation UpdateUserPreferences($id: String!, $preferences: jsonb!) {
+  update_users(where: {auth_id: {_eq: $id}}, _set: {preferences: $preferences}) {
+    returning {
+      preferences
+    }
+  }
+}
