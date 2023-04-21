@@ -1,0 +1,5 @@
+query GetAutoCollapseHeader($id: String!) {
+	users(where: { auth_id: {_eq: $id}}) {
+		auto_collapse_header
+	}
+}

@@ -1,0 +1,5 @@
+query GetFormatting($id: String!) {
+	users(where: {auth_id: {_eq: $id}}) {
+		formatting
+	}
+}

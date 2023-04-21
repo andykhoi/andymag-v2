@@ -1,0 +1,5 @@
+query GetFontScale($id: String!) {
+	users(where: { auth_id: {_eq: $id}}) {
+		font_scale
+	}
+}

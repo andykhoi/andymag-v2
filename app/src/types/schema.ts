@@ -15,6 +15,19 @@ export type Scalars = {
   uuid: any;
 };
 
+/** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
+export type Boolean_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['Boolean']>;
+  _gt?: InputMaybe<Scalars['Boolean']>;
+  _gte?: InputMaybe<Scalars['Boolean']>;
+  _in?: InputMaybe<Array<Scalars['Boolean']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['Boolean']>;
+  _lte?: InputMaybe<Scalars['Boolean']>;
+  _neq?: InputMaybe<Scalars['Boolean']>;
+  _nin?: InputMaybe<Array<Scalars['Boolean']>>;
+};
+
 /** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
 export type String_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['String']>;
@@ -268,9 +281,13 @@ export type Users = {
   __typename?: 'users';
   activity: Scalars['jsonb'];
   auth_id: Scalars['String'];
+  auto_collapse_header: Scalars['Boolean'];
   created_at: Scalars['timestamptz'];
+  font_scale: Scalars['String'];
+  formatting: Scalars['jsonb'];
   id: Scalars['uuid'];
   preferences: Scalars['jsonb'];
+  settings: Scalars['jsonb'];
   updated_at: Scalars['timestamptz'];
 };
 
@@ -282,7 +299,19 @@ export type UsersActivityArgs = {
 
 
 /** dev users table  */
+export type UsersFormattingArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+
+/** dev users table  */
 export type UsersPreferencesArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+
+/** dev users table  */
+export type UsersSettingsArgs = {
   path?: InputMaybe<Scalars['String']>;
 };
 
@@ -311,7 +340,9 @@ export type Users_Aggregate_FieldsCountArgs = {
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type Users_Append_Input = {
   activity?: InputMaybe<Scalars['jsonb']>;
+  formatting?: InputMaybe<Scalars['jsonb']>;
   preferences?: InputMaybe<Scalars['jsonb']>;
+  settings?: InputMaybe<Scalars['jsonb']>;
 };
 
 /** Boolean expression to filter rows from the table "users". All fields are combined with a logical 'AND'. */
@@ -321,9 +352,13 @@ export type Users_Bool_Exp = {
   _or?: InputMaybe<Array<Users_Bool_Exp>>;
   activity?: InputMaybe<Jsonb_Comparison_Exp>;
   auth_id?: InputMaybe<String_Comparison_Exp>;
+  auto_collapse_header?: InputMaybe<Boolean_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  font_scale?: InputMaybe<String_Comparison_Exp>;
+  formatting?: InputMaybe<Jsonb_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   preferences?: InputMaybe<Jsonb_Comparison_Exp>;
+  settings?: InputMaybe<Jsonb_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -338,28 +373,38 @@ export enum Users_Constraint {
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
 export type Users_Delete_At_Path_Input = {
   activity?: InputMaybe<Array<Scalars['String']>>;
+  formatting?: InputMaybe<Array<Scalars['String']>>;
   preferences?: InputMaybe<Array<Scalars['String']>>;
+  settings?: InputMaybe<Array<Scalars['String']>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type Users_Delete_Elem_Input = {
   activity?: InputMaybe<Scalars['Int']>;
+  formatting?: InputMaybe<Scalars['Int']>;
   preferences?: InputMaybe<Scalars['Int']>;
+  settings?: InputMaybe<Scalars['Int']>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type Users_Delete_Key_Input = {
   activity?: InputMaybe<Scalars['String']>;
+  formatting?: InputMaybe<Scalars['String']>;
   preferences?: InputMaybe<Scalars['String']>;
+  settings?: InputMaybe<Scalars['String']>;
 };
 
 /** input type for inserting data into table "users" */
 export type Users_Insert_Input = {
   activity?: InputMaybe<Scalars['jsonb']>;
   auth_id?: InputMaybe<Scalars['String']>;
+  auto_collapse_header?: InputMaybe<Scalars['Boolean']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
+  font_scale?: InputMaybe<Scalars['String']>;
+  formatting?: InputMaybe<Scalars['jsonb']>;
   id?: InputMaybe<Scalars['uuid']>;
   preferences?: InputMaybe<Scalars['jsonb']>;
+  settings?: InputMaybe<Scalars['jsonb']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
@@ -368,6 +413,7 @@ export type Users_Max_Fields = {
   __typename?: 'users_max_fields';
   auth_id?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
+  font_scale?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -377,6 +423,7 @@ export type Users_Min_Fields = {
   __typename?: 'users_min_fields';
   auth_id?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
+  font_scale?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -401,9 +448,13 @@ export type Users_On_Conflict = {
 export type Users_Order_By = {
   activity?: InputMaybe<Order_By>;
   auth_id?: InputMaybe<Order_By>;
+  auto_collapse_header?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
+  font_scale?: InputMaybe<Order_By>;
+  formatting?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   preferences?: InputMaybe<Order_By>;
+  settings?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
 
@@ -415,7 +466,9 @@ export type Users_Pk_Columns_Input = {
 /** prepend existing jsonb value of filtered columns with new jsonb value */
 export type Users_Prepend_Input = {
   activity?: InputMaybe<Scalars['jsonb']>;
+  formatting?: InputMaybe<Scalars['jsonb']>;
   preferences?: InputMaybe<Scalars['jsonb']>;
+  settings?: InputMaybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "users" */
@@ -425,11 +478,19 @@ export enum Users_Select_Column {
   /** column name */
   AuthId = 'auth_id',
   /** column name */
+  AutoCollapseHeader = 'auto_collapse_header',
+  /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  FontScale = 'font_scale',
+  /** column name */
+  Formatting = 'formatting',
   /** column name */
   Id = 'id',
   /** column name */
   Preferences = 'preferences',
+  /** column name */
+  Settings = 'settings',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -438,9 +499,13 @@ export enum Users_Select_Column {
 export type Users_Set_Input = {
   activity?: InputMaybe<Scalars['jsonb']>;
   auth_id?: InputMaybe<Scalars['String']>;
+  auto_collapse_header?: InputMaybe<Scalars['Boolean']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
+  font_scale?: InputMaybe<Scalars['String']>;
+  formatting?: InputMaybe<Scalars['jsonb']>;
   id?: InputMaybe<Scalars['uuid']>;
   preferences?: InputMaybe<Scalars['jsonb']>;
+  settings?: InputMaybe<Scalars['jsonb']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
@@ -456,9 +521,13 @@ export type Users_Stream_Cursor_Input = {
 export type Users_Stream_Cursor_Value_Input = {
   activity?: InputMaybe<Scalars['jsonb']>;
   auth_id?: InputMaybe<Scalars['String']>;
+  auto_collapse_header?: InputMaybe<Scalars['Boolean']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
+  font_scale?: InputMaybe<Scalars['String']>;
+  formatting?: InputMaybe<Scalars['jsonb']>;
   id?: InputMaybe<Scalars['uuid']>;
   preferences?: InputMaybe<Scalars['jsonb']>;
+  settings?: InputMaybe<Scalars['jsonb']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
@@ -469,11 +538,19 @@ export enum Users_Update_Column {
   /** column name */
   AuthId = 'auth_id',
   /** column name */
+  AutoCollapseHeader = 'auto_collapse_header',
+  /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  FontScale = 'font_scale',
+  /** column name */
+  Formatting = 'formatting',
   /** column name */
   Id = 'id',
   /** column name */
   Preferences = 'preferences',
+  /** column name */
+  Settings = 'settings',
   /** column name */
   UpdatedAt = 'updated_at'
 }

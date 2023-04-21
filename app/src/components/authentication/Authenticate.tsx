@@ -183,6 +183,9 @@ export const Authenticate: FC = () => {
 					div {
 						width: 420px;
 						background-color: blue;
+						position: absolute;
+						z-index: 10000;
+						top: 0;
 					}
 				`}</style>
 			</div>

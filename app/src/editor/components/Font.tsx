@@ -14,7 +14,7 @@ export const Font: FC<FontProps> = ({
 		defaultFont,
 		fontFamilies
 	} = useFormatting()
-
+	
 	const getEditorFontFamily = () => {
 		const family = fontFamilies[`${defaultFont}`]
 		return family.style.fontFamily

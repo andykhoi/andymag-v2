@@ -7,9 +7,13 @@ select_permissions:
       columns:
         - activity
         - auth_id
+        - auto_collapse_header
         - created_at
+        - font_scale
+        - formatting
         - id
         - preferences
+        - settings
         - updated_at
       filter:
         auth_id:

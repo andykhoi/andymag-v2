@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
 			publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_API_KEY}
 		>
 			<ApolloProviderWithClerk>
-				<UserContextProvider>
+				{/* <UserContextProvider> */}
 					<main className={`${inter.className}`}>
 						<Component {...pageProps} />
 						{/* <SignedOut>
@@ -51,7 +51,7 @@ export default function App({ Component, pageProps }: AppProps) {
 							height: 100%;
 						}
 					`}</style>
-				</UserContextProvider>
+				{/* </UserContextProvider> */}
 			</ApolloProviderWithClerk>
 		</ClerkProvider>
 	)
