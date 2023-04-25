@@ -1,0 +1,7 @@
+mutation UpdateUserFormatting($id: String!, $formatting: jsonb!) {
+  update_users(where: {auth_id: {_eq: $id}}, _set: {formatting: $formatting}) {
+    returning {
+      formatting
+    }
+  }
+}

@@ -6,7 +6,8 @@ import { Inter } from '@next/font/google'
 import reset from '../styles/reset'
 
 import { Authenticate, getAuthMode } from '@/components/authentication/Authenticate'
-import { UserContextProvider } from '@/contexts/UserContext'
+// import { UserContextProvider } from '@/contexts/UserContext'
+import { ActivityContextProvider } from '@/contexts/ActivityContext'
 import { ApolloProviderWithClerk } from '@/contexts/ApolloProviderWithClerk'
 
 // default font across website
@@ -27,6 +28,7 @@ export default function App({ Component, pageProps }: AppProps) {
 		>
 			<ApolloProviderWithClerk>
 				{/* <UserContextProvider> */}
+				<ActivityContextProvider>
 					<main className={`${inter.className}`}>
 						<Component {...pageProps} />
 						{/* <SignedOut>
@@ -51,6 +53,7 @@ export default function App({ Component, pageProps }: AppProps) {
 							height: 100%;
 						}
 					`}</style>
+				</ActivityContextProvider>
 				{/* </UserContextProvider> */}
 			</ApolloProviderWithClerk>
 		</ClerkProvider>

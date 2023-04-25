@@ -6,7 +6,8 @@ import {
 	Dispatch,
 	SetStateAction,
 	useContext,
-	useEffect
+	useEffect,
+	useCallback
 } from 'react'
 // import { Inter } from '@next/font/google'
 import localFont  from '@next/font/local'
@@ -14,6 +15,9 @@ import { NextFont, NextFontWithVariable } from '@next/font'
 import { useUser } from '@clerk/nextjs'
 import { useGetFormattingLazyQuery, GetFormattingQuery } from '@/graphql/queries/getFormatting'
 // import { useGetFontScaleLazyQuery, GetFontScaleQuery } from '@/graphql/queries/getFontScale'
+import { getAnonData, initAnonData, setAnonData } from '@/utils/localStorage'
+import { Formatting } from '@/types/custom'
+import { useUpdateUserFormattingMutation } from '@/graphql/mutations/updateUserFormatting'
 
 interface FormattingContextType {
 	isLoaded: boolean
@@ -53,6 +57,8 @@ interface FormattingContextType {
 	// setDefaultPadding: Dispatch<SetStateAction<string>>
 	// setOptimalContentWidth: Dispatch<SetStateAction<string>>
 	setAutoCollapseHeader: Dispatch<SetStateAction<boolean>>
+
+	updateFormatting: undefined | ((formatting: Formatting) => void)
 }
 
 export type FormattingContextWrapperProps = Partial<Pick<FormattingContextType, 'autoCollapseHeader' | 'defaultPadding' | 'optimalContentWidth' | 'fontSizingChart' | 'breakpoints' | 'panelWidth' | 'sidebarWidth'>> & { children: ReactNode }
@@ -129,6 +135,7 @@ const defaultFormattingContextValue: FormattingContextType = {
 	// setDefaultPadding: () => null,
 	setAutoCollapseHeader: () => null,
 	// setOptimalContentWidth: () => null
+	updateFormatting: undefined
 }
 
 export const FormattingContext = createContext<FormattingContextType>(defaultFormattingContextValue)
@@ -166,9 +173,47 @@ export const FormattingContextWrapper: FC<FormattingContextWrapperProps> = ({
 		sidebar: `${sidebarWidth} + ${panelWidth} + (${optimalContentWidth} + (2 * ${defaultPadding}))`,
 	})
 
-	// const [getFontScale, ] = useGetFontScaleLazyQuery()
 	const [getFormatting, ] = useGetFormattingLazyQuery()
+	const [updateUserFormatting, ] = useUpdateUserFormattingMutation()
 
+	const updateFormatting = useCallback(async (formatting: Partial<Formatting>) => {
+		// prob need to rate limit this function
+		if (!id) {
+			// update localStorage
+			const old = getAnonData()
+			let updated
+			if (!old) {
+				const initialized = initAnonData()
+				updated = {...initialized, formatting: {...initialized.formatting, ...formatting}}
+			} else {
+				updated = { ...old, formatting: {...old.formatting, ...formatting }}
+			}
+			
+			const didUpdate = setAnonData({ ...updated })
+			
+			if (didUpdate) {
+				setFontScale(didUpdate.formatting.fontScale)
+			}
+		} else {
+			// update user's hasura data
+			const updated = {
+				// include any user configurable formatting properties
+				fontScale,
+				...formatting
+			}
+			const { data } = await updateUserFormatting({
+				variables: {
+					id,
+					formatting: updated
+				}
+			})
+
+			const didUpdate = data?.update_users?.returning[0]
+			if (didUpdate) {
+				setFontScale(didUpdate.formatting.fontScale)
+			}
+		}
+	}, [id, fontScale, updateUserFormatting])
 
 	useEffect(() => {
 		if (!isClerkLoaded) return
@@ -219,22 +264,14 @@ export const FormattingContextWrapper: FC<FormattingContextWrapperProps> = ({
 				const userData = await pollUserData(id)
 
 				data.fontScale = userData?.users[0].formatting.fontScale
+			} else {
+				const anonData = getAnonData()
+				data.fontScale = anonData ? anonData.formatting.fontScale : initAnonData().formatting.fontScale
 			}
-
-			// if (!id) {
-			// 	const anonData = getAnonData()
-			// 	data = anonData ? anonData : initAnonData()
-			// } else {
-			// 	// if the user is new it will take some time for the webhook to populate hasura with the new user data
-			// 	const userData = await pollUserData(id)
-
-			// 	data.activity = userData?.users[0].activity
-			// 	data.preferences = userData?.users[0].preferences
-			// }
 
 			return data
 		}
-	
+
 		const init = async () => {			
 			const userData = await getData()
 
@@ -248,6 +285,7 @@ export const FormattingContextWrapper: FC<FormattingContextWrapperProps> = ({
 
 	const store = {
 		isLoaded,
+		updateFormatting: isClerkLoaded ? updateFormatting : undefined,
 		defaultPadding,
 		// setDefaultPadding,
 
@@ -270,6 +308,7 @@ export const FormattingContextWrapper: FC<FormattingContextWrapperProps> = ({
 		panelWidth,
 		sidebarWidth
 	}
+
 	return (
 		<FormattingContextProvider value={store}>
 			{ children }
@@ -280,6 +319,7 @@ export const FormattingContextWrapper: FC<FormattingContextWrapperProps> = ({
 export const useFormatting = () => {
 	return useContext(FormattingContext)
 }
+
 
 // import {
 // 	FC,

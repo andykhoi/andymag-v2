@@ -1,19 +1,20 @@
 import { Users } from '../types/schema'
 import { Activity, Preferences } from '../../../types/custom'
-import { EnrichedUserData } from '@/contexts/UserContext'
+// import { EnrichedUserData } from '@/contexts/UserContext'
+import { UserData } from '@/types/custom'
 
-type AnonUserDataInput = Partial<Pick<Users, 'activity' | 'preferences'>>
+type AnonUserDataInput = Partial<Pick<Users, 'activity' | 'settings' | 'formatting'>>
 
 // type EnrichedUserData = {
 // 	activity: Activity[]
 // 	preferences: Preferences
 // }
 
-export const getAnonData: () => EnrichedUserData | null = () => {
+export const getAnonData: () => UserData | null = () => {
 	return JSON.parse(window.localStorage.getItem('anon_AM_user') as string)
 }
 
-export const setAnonData: (data: AnonUserDataInput) => EnrichedUserData = (data) => {
+export const setAnonData: (data: AnonUserDataInput) => UserData = (data) => {
 	const old = window.localStorage.getItem('anon_AM_user')
 	if (!old) {
 		window.localStorage.setItem('anon_AM_user', JSON.stringify(data))
@@ -27,9 +28,11 @@ export const setAnonData: (data: AnonUserDataInput) => EnrichedUserData = (data)
 
 export const initAnonData = () => {
 	return setAnonData({
-		preferences: {
+		settings: {
 			autoCollapseHeader: false,
-			fontSize: 'md'
+		},
+		formatting: {
+			fontScale: 'md',
 		},
 		activity: []
 	})

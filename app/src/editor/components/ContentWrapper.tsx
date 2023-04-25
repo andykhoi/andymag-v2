@@ -19,6 +19,7 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 		fontFamilies,
 		optimalContentWidth,
 		defaultPadding,
+		updateFormatting
 	} = useFormatting()
 
 	return (
@@ -27,6 +28,7 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 				<div className="content">
 					<div className="font">
 						<div className="grid">
+							<button onClick={() => isLoaded && updateFormatting && updateFormatting({ fontScale: 'lg'})}>update font scale to large</button>
 							{ children }
 						</div>
 					</div>

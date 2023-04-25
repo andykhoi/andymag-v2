@@ -1,0 +1,5 @@
+query GetActivity($id: String!) {
+	users(where: {auth_id: {_eq: $id}}) {
+		activity
+	}
+}

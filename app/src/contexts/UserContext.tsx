@@ -8,10 +8,11 @@ import { useGetPreferencesAndActivityWithIdLazyQuery, GetPreferencesAndActivityW
 import { useUpdateUserActivityMutation } from '@/graphql/mutations/updateUserActivity'
 import { useUpdateUserPreferencesMutation } from '@/graphql/mutations/updateUserPreferences'
 
-export interface EnrichedUserData {
-	activity: Activity[]
-	preferences: Preferences
-}
+// export interface EnrichedUserData {
+// 	activity: Activity[]
+// 	preferences: Preferences
+// }
+export type UserData = Pick<Users, 'formatting' | 'settings' | 'activity'>
 
 interface UserContextProviderProps {
 	children: ReactNode

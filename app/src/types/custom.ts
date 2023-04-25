@@ -1,3 +1,5 @@
+import { Users } from './schema'
+
 export type Activity = NavigationActivity
 
 export interface Preferences {
@@ -13,5 +15,12 @@ interface ActivityBase {
 type NavigationActivity = ActivityBase & {
 	type: 'navigation'
 }
+
+export interface Formatting {
+	fontScale: 'sm' | 'md' | 'lg'
+}
+
+export type UserData = Pick<Users, 'formatting' | 'settings' | 'activity'>
+
 
 
