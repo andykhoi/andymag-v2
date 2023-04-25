@@ -23,7 +23,9 @@ update_permissions:
     permission:
       columns:
         - activity
+        - formatting
         - preferences
+        - settings
       filter:
         auth_id:
           _eq: X-Hasura-User-Id
