@@ -1,5 +1,5 @@
 import { FC, ReactNode, useContext } from 'react'
-import { FormattingContext, useFormatting } from '../context/FormattingContextWrapper'
+import { FormattingContext, useFormatting } from '../context/FormattingContextProvider'
 
 interface FontProps {
 	children: ReactNode

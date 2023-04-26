@@ -1,0 +1,7 @@
+mutation UpdateUserSettings($id: String!, $settings: jsonb!) {
+  update_users(where: {auth_id: {_eq: $id}}, _set: {settings: $settings}) {
+    returning {
+      settings
+    }
+  }
+}

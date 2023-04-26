@@ -1,31 +1,28 @@
 import { FC, ReactNode } from 'react'
 
-import { FormattingContextWrapper } from '../context/FormattingContextWrapper'
-import { PeopleContextWrapper } from '../context/PeopleContextWrapper'
+import { FormattingContextProvider } from '../context/FormattingContextProvider'
+import { PeopleContextProvider } from '../context/PeopleContextProvider'
 import { ContentWrapper } from './ContentWrapper'
 
-import { FormattingContextWrapperProps } from '../context/FormattingContextWrapper'
-import { PeopleContextWrapperProps } from '../context/PeopleContextWrapper'
+import { FormattingContextProviderProps } from '../context/FormattingContextProvider'
+import { PeopleContextProviderProps } from '../context/PeopleContextProvider'
 import { Sidebar } from './Sidebar'
+import { SettingsContextProvider } from '../context/SettingsContextProvider'
 
-type EditorProps = FormattingContextWrapperProps & PeopleContextWrapperProps & {
+type EditorProps = FormattingContextProviderProps & PeopleContextProviderProps & {
 	children: ReactNode
 }
 
 export const Editor: FC<EditorProps> = ({
-	autoCollapseHeader,
 	defaultPadding,
 	optimalContentWidth,
-	fontScale,
 	fontSizingChart,
 	people,
 	children
 }) => {
 	const formattingOptions = {
-		autoCollapseHeader,
 		defaultPadding,
 		optimalContentWidth,
-		fontScale,
 		fontSizingChart,
 	}
 	const peopleOptions = {
@@ -33,18 +30,21 @@ export const Editor: FC<EditorProps> = ({
 	}
 	return (
 		<>
-			<FormattingContextWrapper {...formattingOptions}>
-				<PeopleContextWrapper {...peopleOptions}>
-					{/* <Header component here */}
+			<FormattingContextProvider {...formattingOptions}>
+				<PeopleContextProvider {...peopleOptions}>
+					<SettingsContextProvider>
 					<div>
+						{/* Mobile header component here */}
 						<Sidebar />
+						{/* <Panel /> */}
 						<ContentWrapper>
 							{ children }
 						</ContentWrapper>
+						{/* toolbar component here */}
 					</div>
-					{/* toolbar component here */}
-				</PeopleContextWrapper>
-			</FormattingContextWrapper>
+					</SettingsContextProvider>
+				</PeopleContextProvider>
+			</FormattingContextProvider>
 			<style jsx>{`
 				div {
 					display: flex;

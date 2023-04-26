@@ -12,7 +12,7 @@ interface PeopleContextType {
 	getPerson: (userId: string) => Person | null
 }
 
-export type PeopleContextWrapperProps = Partial<Pick<PeopleContextType, 'people'>> & { children: ReactNode }
+export type PeopleContextProviderProps = Partial<Pick<PeopleContextType, 'people'>> & { children: ReactNode }
 
 const defaultPeopleContextValue: PeopleContextType = {
 	people: [],
@@ -20,9 +20,9 @@ const defaultPeopleContextValue: PeopleContextType = {
 }
 
 export const PeopleContext = createContext<PeopleContextType>(defaultPeopleContextValue)
-export const PeopleContextProvider = PeopleContext.Provider
+// export const PeopleContextProvider = PeopleContext.Provider
 
-export const PeopleContextWrapper: FC<PeopleContextWrapperProps> = ({
+export const PeopleContextProvider: FC<PeopleContextProviderProps> = ({
 	people: overrideDefaultPeople = null,
 	children
 }) => {
@@ -39,8 +39,8 @@ export const PeopleContextWrapper: FC<PeopleContextWrapperProps> = ({
 	}
 
 	return (
-		<PeopleContextProvider value={store}>
+		<PeopleContext.Provider value={store}>
 			{ children }
-		</PeopleContextProvider>
+		</PeopleContext.Provider>
 	)
 }

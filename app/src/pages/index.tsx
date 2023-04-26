@@ -1,31 +1,27 @@
 import { Editor } from '@/editor/components/Editor'
 import { useEffect } from 'react'
 import { useClerk } from '@clerk/nextjs'
-import { useFormatting } from '@/editor/context/FormattingContextWrapper'
-import { useActivity } from '@/contexts/ActivityContext'
+import { useActivity, useUserFormatting } from '@/contexts/UserContext'
 
 import { useRouter } from 'next/router'
-import useComponentDidMount from '../hooks/useComponentDidMount'
 
 const Home = () => {
 	const { signOut } = useClerk()
 	const { updateActivity, isLoaded } = useActivity()
+	const { updateFormatting } = useUserFormatting()
+
 	const router = useRouter()
 
 	useEffect(() => {
-		// only want to call this once.
 		if (isLoaded && updateActivity) {
-			updateActivity({ type: 'navigation', tags: [`path:${router.asPath}`, 'article:what-is-art'], timestamp: Date.now().toString() })
+			updateActivity({ type: 'navigation', tags: [`path:${router.pathname}`, 'article:what-is-art'], timestamp: Date.now().toString() })
 		}
-	}, [updateActivity, isLoaded, router.asPath])
-
-	// useComponentDidMount(() => {
-		// updateActivity({ type: 'navigation', tags: [`path:${router.asPath}`, 'article:what-is-art'], timestamp: Date.now().toString() })
-	// })
+	}, [updateActivity, isLoaded, router.pathname])
 
 	return (
 		<>
-			<button onClick={() => signOut()}>Sign out</button>
+			{/* <button onClick={() => signOut()}>Sign out</button> */}
+			{/* <button onClick={() => updateFormatting && updateFormatting({ fontScale: 'sm' })}>update formatting</button> */}
 			<Editor>
 				<div>I feel the betadine solution drip down my hand as I scrub and the dirt on my back as I lie on the ground. I feel the sweat on my skin from the August humidity. Above me, I see wrinkles of gray and silver. I take in the surrealness of lying underneath nine thousand pounds of beauty. Our backdrop is the lush greenery of the Thai rainforests. I am 8,000 miles away from my house, yet I have never felt more at home. </div>
 				<div>I get up from under Kabu, having cleaned her wound, and stare into her honey-colored eyes. Although she is one hundred times my size, I've never felt so connected to an animal in my entire life. This moment seems ethereal.</div>

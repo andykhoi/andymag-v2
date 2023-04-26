@@ -6,7 +6,7 @@ import { Inter } from '@next/font/google'
 import reset from '../styles/reset'
 
 import { Authenticate, getAuthMode } from '@/components/authentication/Authenticate'
-// import { UserContextProvider } from '@/contexts/UserContext'
+import { UserContextProvider } from '@/contexts/UserContext'
 import { ActivityContextProvider } from '@/contexts/ActivityContext'
 import { ApolloProviderWithClerk } from '@/contexts/ApolloProviderWithClerk'
 
@@ -27,8 +27,8 @@ export default function App({ Component, pageProps }: AppProps) {
 			publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_API_KEY}
 		>
 			<ApolloProviderWithClerk>
-				{/* <UserContextProvider> */}
-				<ActivityContextProvider>
+				<UserContextProvider>
+				{/* <ActivityContextProvider> */}
 					<main className={`${inter.className}`}>
 						<Component {...pageProps} />
 						{/* <SignedOut>
@@ -53,8 +53,8 @@ export default function App({ Component, pageProps }: AppProps) {
 							height: 100%;
 						}
 					`}</style>
-				</ActivityContextProvider>
-				{/* </UserContextProvider> */}
+				{/* </ActivityContextProvider> */}
+				</UserContextProvider>
 			</ApolloProviderWithClerk>
 		</ClerkProvider>
 	)

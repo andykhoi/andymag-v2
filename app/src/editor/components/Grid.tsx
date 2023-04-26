@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react'
-import { useFormatting } from '../context/FormattingContextWrapper'
+import { useFormatting } from '../context/FormattingContextProvider'
 
 interface GridProps {
 	children: ReactNode
