@@ -9,10 +9,8 @@ select_permissions:
         - auth_id
         - auto_collapse_header
         - created_at
-        - font_scale
         - formatting
         - id
-        - preferences
         - settings
         - updated_at
       filter:
@@ -24,7 +22,6 @@ update_permissions:
       columns:
         - activity
         - formatting
-        - preferences
         - settings
       filter:
         auth_id:
