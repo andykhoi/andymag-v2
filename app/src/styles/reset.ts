@@ -11,6 +11,11 @@ export default css.global`
 
 	html, body, #__next {
 		height: 100%;
+		
+	}
+
+	html {
+		-webkit-text-size-adjust: 100%; /* Prevent font scaling in landscape while allowing user zoom */
 	}
 
 	body {

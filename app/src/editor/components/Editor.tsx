@@ -8,6 +8,7 @@ import { FormattingContextProviderProps } from '../context/FormattingContextProv
 import { PeopleContextProviderProps } from '../context/PeopleContextProvider'
 import { Sidebar } from './Sidebar'
 import { SettingsContextProvider } from '../context/SettingsContextProvider'
+import { Toolbar } from './Toolbar'
 
 type EditorProps = FormattingContextProviderProps & PeopleContextProviderProps & {
 	children: ReactNode
@@ -33,23 +34,24 @@ export const Editor: FC<EditorProps> = ({
 			<FormattingContextProvider {...formattingOptions}>
 				<PeopleContextProvider {...peopleOptions}>
 					<SettingsContextProvider>
-					<div>
+					{/* <div> */}
 						{/* Mobile header component here */}
-						<Sidebar />
+						{/* <Sidebar /> */}
+						<Toolbar />
 						{/* <Panel /> */}
 						<ContentWrapper>
 							{ children }
 						</ContentWrapper>
 						{/* toolbar component here */}
-					</div>
+					{/* </div> */}
 					</SettingsContextProvider>
 				</PeopleContextProvider>
 			</FormattingContextProvider>
 			<style jsx>{`
-				div {
-					display: flex;
-					height: 100%;
-				}
+				// div {
+				// 	display: flex;
+				// 	height: 100%;
+				// }
 			`}</style>
 		</>
 	)

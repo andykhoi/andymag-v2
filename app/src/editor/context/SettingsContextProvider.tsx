@@ -1,8 +1,8 @@
-import { FC, createContext, ReactNode, useState, Dispatch, SetStateAction } from 'react'
+import { FC, createContext, ReactNode, useState, Dispatch, SetStateAction, useContext } from 'react'
 
 interface SettingsContextType {
-	panel: 'search' | 'share' | 'preferences' | null
-	setPanel: Dispatch<SetStateAction<'search' | 'share' | 'preferences' | null>>
+	panel: 'spotlight' | 'share' | 'preferences' | null
+	setPanel: Dispatch<SetStateAction<'spotlight' | 'share' | 'preferences' | null>>
 }
 
 interface SettingsContextProviderProps {
@@ -29,4 +29,8 @@ export const SettingsContextProvider: FC<SettingsContextProviderProps> = ({ chil
 			{ children }
 		</SettingsContext.Provider>
 	)
+}
+
+export const useEditorSettings = () => {
+	return useContext(SettingsContext)
 }

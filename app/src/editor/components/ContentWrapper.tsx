@@ -53,10 +53,10 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 						}
 					`}</style>
 					<style jsx>{`
-						.content {
-							flex: 1;
-							overflow-y: scroll;
-						}
+						// .content {
+						// 	flex: 1;
+						// 	overflow-y: scroll;
+						// }
 					`}</style>
 				</div>
 				:

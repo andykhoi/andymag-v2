@@ -1,4 +1,5 @@
-export { Explore } from './Explore'
+export { Spotlight } from './Spotlight'
 export { Logo } from './Logo'
 export { Preferences } from './Preferences'
 export { Share } from './Share'
+export { Login } from './Login'
