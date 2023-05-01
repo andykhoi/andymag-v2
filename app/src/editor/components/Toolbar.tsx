@@ -8,6 +8,7 @@ const Tools: FC = () => {
 
 	return (
 		<div className="tools">
+			{/* share button prob won't bold on mobile - instead will just open the native share menu, desktop should bold though */}
 			<div onClick={() => setPanel('share')} className="button">
 				<Share fill={panel === 'share'}/>
 			</div>
@@ -66,14 +67,15 @@ export const Toolbar: FC = () => {
 				<Logo />
 			</div>
 			<Tools />
-			<SignedIn>
-				{/* view profile button */}
-			</SignedIn>
-			<SignedOut>
-				<div className="login">
-					<Login />
-				</div>
-			</SignedOut>
+			<div className="profile">
+				<SignedIn>
+					{/* view profile button */}
+				</SignedIn>
+				<SignedOut>
+						<Login />
+				</SignedOut>
+			</div>
+			
 			<style jsx>{`
 				.toolbar {
 					display: flex;
@@ -88,7 +90,7 @@ export const Toolbar: FC = () => {
 					align-items: center;
 				}
 
-				.logo, .login {
+				.logo, .profile {
 					display: none;
 				}
 				
@@ -98,9 +100,11 @@ export const Toolbar: FC = () => {
 						width: 72px;
 						flex-direction: column;
 						justify-content: space-between;
+						border-top: none;
+						border-right: 1px solid var(--accent-black);
 					}
 
-					.logo, .login {
+					.logo, .profile {
 						display: flex;
 						justify-content: center;
 					}
@@ -109,7 +113,7 @@ export const Toolbar: FC = () => {
 						padding-top: 2rem;
 					}
 
-					.login {
+					.profile {
 						display: flex;
 						height: 54px;
 						width: 54px;
@@ -119,7 +123,7 @@ export const Toolbar: FC = () => {
 						border-radius: 7px;
 					}
 
-					.login:hover {
+					.profile:hover {
 						background-color: var(--hover-black);
 						cursor: pointer;
 					}

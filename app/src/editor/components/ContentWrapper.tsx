@@ -25,6 +25,10 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 
 	return (
 		<>
+			{/* probably better loading would be showing loader all the way until the content wrapper content is mounted.
+				basically something like a loader overlay that sits on top until content is "ready" 
+				- probably can write some JS event to watch if content above the fold has loaded
+			*/}
 			{	(isLoaded && userFormatting) ?
 				<div className="content">
 					<div className="font">
@@ -41,10 +45,15 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 							display: grid;
 							width: 100%;
 							grid-auto-flow: column;
-							// min-height: 100%;
 						}
 						.grid > :global(div) {
 							grid-column: 2;
+						}
+						@media screen and (min-width: 1024px) {
+							.content {
+								width: calc(100% - 355px);
+								display: inline-block;
+							}
 						}
 					`}</style>
 					<style jsx>{`
@@ -52,12 +61,12 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 							grid-template-columns: 1fr min(${optimalContentWidth}, calc(100% - (2*${defaultPadding}))) 1fr;
 						}
 					`}</style>
-					<style jsx>{`
+					{/* <style jsx>{`
 						// .content {
 						// 	flex: 1;
 						// 	overflow-y: scroll;
 						// }
-					`}</style>
+					`}</style> */}
 				</div>
 				:
 				<Spinner />

@@ -5,6 +5,7 @@ import { ClerkProvider, SignedOut} from '@clerk/nextjs'
 import { Inter } from '@next/font/google'
 import reset from '../styles/reset'
 import colors from '../styles/colors'
+import viewports from '../styles/viewports'
 
 import { Authenticate, getAuthMode } from '@/components/authentication/Authenticate'
 import { UserContextProvider } from '@/contexts/UserContext'
@@ -50,6 +51,9 @@ export default function App({ Component, pageProps }: AppProps) {
 					</style>
 					<style jsx global>
 						{ colors }
+					</style>
+					<style jsx global>
+						{ viewports }
 					</style>
 					<style jsx>{`
 						main {
