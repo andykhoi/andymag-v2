@@ -36,25 +36,20 @@ export const Editor: FC<EditorProps> = ({
 			<FormattingContextProvider {...formattingOptions}>
 				<PeopleContextProvider {...peopleOptions}>
 					<SettingsContextProvider>
-					{/* <div> */}
-						{/* Mobile header component here */}
 						<MobileHeader />
-						{/* <Sidebar /> */}
 						<Toolbar />
 						<Panel />
 						<ContentWrapper>
-							{ children }	
+							{ children }
 						</ContentWrapper>
-						{/* toolbar component here */}
-					{/* </div> */}
 					</SettingsContextProvider>
 				</PeopleContextProvider>
 			</FormattingContextProvider>
 			<style jsx>{`
-				
 				@media screen and (min-width: 1024px) {
 					.editor {
-						display: flex
+						height: 100%;
+						display: flex;
 					}
 				}
 			`}</style>

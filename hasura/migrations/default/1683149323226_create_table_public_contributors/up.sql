@@ -1,0 +1,1 @@
+CREATE TABLE "public"."contributors" ("bio" text, "profile_picture" text, "role" text, "tags" jsonb NOT NULL DEFAULT jsonb_build_array(), "instagram" text, "facebook" text, "twitter" text, "website" text, "first_name" text NOT NULL, "last_name" text NOT NULL, "id" text NOT NULL, PRIMARY KEY ("id") );

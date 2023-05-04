@@ -37,6 +37,9 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 						</div>
 					</div>
 					<style jsx>{`
+						.content {
+							overscroll-behavior: contain;
+						}
 						.font {
 							font-family: ${fontFamilies[`${defaultFont}`].style.fontFamily};
 							font-size: ${fontSizingChart[`${userFormatting.fontScale}`]};
@@ -51,8 +54,8 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 						}
 						@media screen and (min-width: 1024px) {
 							.content {
-								width: calc(100% - 355px);
-								display: inline-block;
+								width: 100%;
+								overflow-y: scroll;
 							}
 						}
 					`}</style>

@@ -1,21 +1,26 @@
 import { Editor } from '@/editor/components/Editor'
-import { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import { useClerk } from '@clerk/nextjs'
 import { useActivity, useUserFormatting } from '@/contexts/UserContext'
 import { initializeApollo } from '@/utils/apollo'
 import { gql } from '@apollo/client'
-import { GetMagnoliaContributorsQuery } from '@/graphql/queries/getMagnoliaContributors'
+import { GetMagnoliaContributorsQuery, GetMagnoliaContributorsDocument } from '@/graphql/queries/getMagnoliaContributors'
+import { Contributors } from '@/types/schema'
 import { GetStaticProps } from 'next'
-
 import { useRouter } from 'next/router'
-import Image from 'next/image'
 
-const Home = () => {
-	const { signOut } = useClerk()
+interface WhatIsArtProps {
+	contributors: Contributors[]
+}
+
+const WhatIsArt: FC<WhatIsArtProps> = ({
+	contributors
+}) => {
+	// const { signOut } = useClerk()
 	const { updateActivity, isLoaded } = useActivity()
 
 	const router = useRouter()
-
+	// potensh stick this into _app.js
 	useEffect(() => {
 		if (isLoaded && updateActivity) {
 			updateActivity({ type: 'navigation', tags: [`path:${router.pathname}`, 'article:what-is-art'], timestamp: Date.now().toString() })
@@ -26,7 +31,9 @@ const Home = () => {
 		<>
 			{/* <button onClick={() => signOut()}>Sign out</button> */}
 			{/* <Image src={'/profile_pictures/karin_andersen.png'} alt="headshot of karin andersen" width={100} height={100}/> */}
-			<Editor>
+			<Editor
+				people={contributors}
+			>
 				<div>I feel the betadine solution drip down my hand as I scrub and the dirt on my back as I lie on the ground. I feel the sweat on my skin from the August humidity. Above me, I see wrinkles of gray and silver. I take in the surrealness of lying underneath nine thousand pounds of beauty. Our backdrop is the lush greenery of the Thai rainforests. I am 8,000 miles away from my house, yet I have never felt more at home. </div>
 				<div>I get up from under Kabu, having cleaned her wound, and stare into her honey-colored eyes. Although she is one hundred times my size, I've never felt so connected to an animal in my entire life. This moment seems ethereal.</div>
 				<div>Kabu is the child of a logging elephant. When she was a calf, Kabu followed her mom as she pulled logs. At the age of two, a rolling log hit Kabu and broke her front left wrist. Since then, Kabu has been disabled. Her right paw has also been infected from the pressure of her weight it has taken her entire life.</div>
@@ -41,31 +48,18 @@ const Home = () => {
 	)
 }
 
-// export const getStaticProps: GetStaticProps = async () => {
-// 	const apollo = initializeApollo()
-// 	const getMagnoliaContributors = gql`
-// 		query GetMagnoliaContributors {
-// 			contributors(where: {tags: {_contains: "issue:magnolia"}}) {
-// 				first_name
-// 				last_name
-// 				bio
-// 				facebook
-// 				instagram
-// 				profile_picture
-// 				twitter
-// 				website
-// 			}
-// 		}
-// 	`
-// 	const { data } = await apollo.query<GetMagnoliaContributorsQuery>({
-// 		query: getMagnoliaContributors
-// 	})
+export const getStaticProps: GetStaticProps = async () => {
+	const apollo = initializeApollo()
 
-// 	return {
-// 		props: {
-// 			contributors: data.contributors
-// 		}
-// 	}
-// }
+	const { data } = await apollo.query<GetMagnoliaContributorsQuery>({
+		query: GetMagnoliaContributorsDocument
+	})
 
-export default Home
+	return {
+		props: {
+			contributors: data.contributors
+		}
+	}
+}
+
+export default WhatIsArt

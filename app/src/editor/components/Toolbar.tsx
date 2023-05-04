@@ -96,8 +96,10 @@ export const Toolbar: FC = () => {
 				
 				@media screen and (min-width: 1024px) {
 					.toolbar {
+						position: initial;
 						height: 100%;
-						width: 72px;
+						min-width: 72px;
+						max-width: 72px;
 						flex-direction: column;
 						justify-content: space-between;
 						border-top: none;

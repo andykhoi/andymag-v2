@@ -3,9 +3,18 @@ import {
 	FC,
 	ReactNode,
 	useCallback,
+	useContext,
 	useState
 } from 'react'
-import { Person } from '@/localDatabase/people'
+import { Contributors } from '@/types/schema'
+// import { Person } from '@/localDatabase/people'
+
+// interface PeopleContextType {
+// 	people: Person[]
+// 	getPerson: (userId: string) => Person | null
+// }
+
+type Person = Contributors 
 
 interface PeopleContextType {
 	people: Person[]
@@ -29,7 +38,7 @@ export const PeopleContextProvider: FC<PeopleContextProviderProps> = ({
 	const [people, ] = useState<Person[]>(overrideDefaultPeople || defaultPeopleContextValue.people)
 	
 	const getPerson: (userId: string) => Person | null = useCallback((userId) => {
-		const person = people.find(p => p.user_id === userId) || null
+		const person = people.find(p => p.id === userId) || null
 		return person
 	}, [people])
 
@@ -43,4 +52,8 @@ export const PeopleContextProvider: FC<PeopleContextProviderProps> = ({
 			{ children }
 		</PeopleContext.Provider>
 	)
+}
+
+export const useEditorPeople = () => {
+	return useContext(PeopleContext)
 }

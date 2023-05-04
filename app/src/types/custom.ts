@@ -20,6 +20,10 @@ export interface Formatting {
 	fontScale: 'sm' | 'md' | 'lg'
 }
 
+export interface Settings {
+	autoCollapseHeader: boolean
+}
+
 export type UserData = Pick<Users, 'formatting' | 'settings' | 'activity'>
 
 

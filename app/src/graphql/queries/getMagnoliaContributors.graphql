@@ -1,0 +1,15 @@
+query GetMagnoliaContributors {
+	contributors(where: {tags: {_contains: "issue:magnolia"}}) {
+	    first_name
+		bio
+		facebook
+		instagram
+		id
+		profile_picture
+		last_name
+		role
+		tags
+		twitter
+		website
+	}
+}
