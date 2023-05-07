@@ -6,7 +6,7 @@ const defaultOptions = {} as const;
 export type GetMagnoliaContributorsQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type GetMagnoliaContributorsQuery = { __typename?: 'query_root', contributors: Array<{ __typename?: 'contributors', first_name: string, bio?: string | null, facebook?: string | null, instagram?: string | null, id: any, profile_picture?: string | null, last_name: string, role?: string | null, tags: any, twitter?: string | null, website?: string | null }> };
+export type GetMagnoliaContributorsQuery = { __typename?: 'query_root', contributors: Array<{ __typename?: 'contributors', first_name: string, bio?: string | null, facebook?: string | null, instagram?: string | null, id: any, profile_picture?: string | null, last_name: string, role?: string | null, tags: any, twitter?: string | null, website?: string | null, location?: string | null }> };
 
 
 export const GetMagnoliaContributorsDocument = gql`
@@ -23,6 +23,7 @@ export const GetMagnoliaContributorsDocument = gql`
     tags
     twitter
     website
+    location
   }
 }
     `;

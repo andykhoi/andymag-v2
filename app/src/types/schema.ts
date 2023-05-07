@@ -70,6 +70,7 @@ export type Contributors = {
   id: Scalars['uuid'];
   instagram?: Maybe<Scalars['String']>;
   last_name: Scalars['String'];
+  location?: Maybe<Scalars['String']>;
   profile_picture?: Maybe<Scalars['String']>;
   role?: Maybe<Scalars['String']>;
   tags: Scalars['jsonb'];
@@ -121,6 +122,7 @@ export type Contributors_Bool_Exp = {
   id?: InputMaybe<Uuid_Comparison_Exp>;
   instagram?: InputMaybe<String_Comparison_Exp>;
   last_name?: InputMaybe<String_Comparison_Exp>;
+  location?: InputMaybe<String_Comparison_Exp>;
   profile_picture?: InputMaybe<String_Comparison_Exp>;
   role?: InputMaybe<String_Comparison_Exp>;
   tags?: InputMaybe<Jsonb_Comparison_Exp>;
@@ -159,6 +161,7 @@ export type Contributors_Insert_Input = {
   id?: InputMaybe<Scalars['uuid']>;
   instagram?: InputMaybe<Scalars['String']>;
   last_name?: InputMaybe<Scalars['String']>;
+  location?: InputMaybe<Scalars['String']>;
   profile_picture?: InputMaybe<Scalars['String']>;
   role?: InputMaybe<Scalars['String']>;
   tags?: InputMaybe<Scalars['jsonb']>;
@@ -175,6 +178,7 @@ export type Contributors_Max_Fields = {
   id?: Maybe<Scalars['uuid']>;
   instagram?: Maybe<Scalars['String']>;
   last_name?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
   profile_picture?: Maybe<Scalars['String']>;
   role?: Maybe<Scalars['String']>;
   twitter?: Maybe<Scalars['String']>;
@@ -190,6 +194,7 @@ export type Contributors_Min_Fields = {
   id?: Maybe<Scalars['uuid']>;
   instagram?: Maybe<Scalars['String']>;
   last_name?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
   profile_picture?: Maybe<Scalars['String']>;
   role?: Maybe<Scalars['String']>;
   twitter?: Maybe<Scalars['String']>;
@@ -220,6 +225,7 @@ export type Contributors_Order_By = {
   id?: InputMaybe<Order_By>;
   instagram?: InputMaybe<Order_By>;
   last_name?: InputMaybe<Order_By>;
+  location?: InputMaybe<Order_By>;
   profile_picture?: InputMaybe<Order_By>;
   role?: InputMaybe<Order_By>;
   tags?: InputMaybe<Order_By>;
@@ -252,6 +258,8 @@ export enum Contributors_Select_Column {
   /** column name */
   LastName = 'last_name',
   /** column name */
+  Location = 'location',
+  /** column name */
   ProfilePicture = 'profile_picture',
   /** column name */
   Role = 'role',
@@ -271,6 +279,7 @@ export type Contributors_Set_Input = {
   id?: InputMaybe<Scalars['uuid']>;
   instagram?: InputMaybe<Scalars['String']>;
   last_name?: InputMaybe<Scalars['String']>;
+  location?: InputMaybe<Scalars['String']>;
   profile_picture?: InputMaybe<Scalars['String']>;
   role?: InputMaybe<Scalars['String']>;
   tags?: InputMaybe<Scalars['jsonb']>;
@@ -294,6 +303,7 @@ export type Contributors_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['uuid']>;
   instagram?: InputMaybe<Scalars['String']>;
   last_name?: InputMaybe<Scalars['String']>;
+  location?: InputMaybe<Scalars['String']>;
   profile_picture?: InputMaybe<Scalars['String']>;
   role?: InputMaybe<Scalars['String']>;
   tags?: InputMaybe<Scalars['jsonb']>;
@@ -315,6 +325,8 @@ export enum Contributors_Update_Column {
   Instagram = 'instagram',
   /** column name */
   LastName = 'last_name',
+  /** column name */
+  Location = 'location',
   /** column name */
   ProfilePicture = 'profile_picture',
   /** column name */

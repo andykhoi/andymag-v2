@@ -6,6 +6,8 @@ import { Inter } from '@next/font/google'
 import reset from '../styles/reset'
 import colors from '../styles/colors'
 import viewports from '../styles/viewports'
+import fontSizes from '@/styles/fontSizes'
+import components from '@/styles/components'
 
 import { Authenticate, getAuthMode } from '@/components/authentication/Authenticate'
 import { UserContextProvider } from '@/contexts/UserContext'
@@ -55,6 +57,10 @@ export default function App({ Component, pageProps }: AppProps) {
 					<style jsx global>
 						{ viewports }
 					</style>
+					<style jsx global>
+						{ fontSizes }
+					</style>
+					<style jsx global>{ components }</style>
 					<style jsx>{`
 						main {
 							height: 100%;

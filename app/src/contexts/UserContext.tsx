@@ -139,7 +139,7 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
 
 			const didUpdate = data?.update_users?.returning[0]
 			if (didUpdate) {
-				setFormatting(didUpdate.settings)
+				setSettings(didUpdate.settings)
 			}
 		}
 	}, [id, settings, updateUserSettings])
@@ -261,13 +261,10 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
 		settings,
 		formatting,
 		isLoaded,
-		// preferences,
-		// isLoading,
 
 		updateActivity: isLoaded ? updateActivity : undefined,
 		updateSettings: isLoaded ? updateSettings : undefined,
 		updateFormatting: isLoaded ? updateFormatting : undefined,
-		// updatePreferences
 	}
 
 	return (

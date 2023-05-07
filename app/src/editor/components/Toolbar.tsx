@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { Logo, Spotlight, Preferences, Share, Login } from '@/components/icons'
 import { SignedIn, SignedOut } from '@clerk/nextjs'
 import { useEditorSettings } from '../context/SettingsContextProvider'
+import Link from 'next/link'
 
 const Tools: FC = () => {
 	const { panel, setPanel } = useEditorSettings()
@@ -72,7 +73,9 @@ export const Toolbar: FC = () => {
 					{/* view profile button */}
 				</SignedIn>
 				<SignedOut>
-						<Login />
+						<Link href={'?a=sign-in'} shallow>
+							<Login />
+						</Link>
 				</SignedOut>
 			</div>
 			

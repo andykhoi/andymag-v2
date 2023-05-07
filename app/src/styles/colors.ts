@@ -5,5 +5,6 @@ export default css.global`
 		--main-black: #161618;
 		--accent-black: #242424;
 		--hover-black: #212121;
+		--subtext-grey: #848484;
 	}
 `
