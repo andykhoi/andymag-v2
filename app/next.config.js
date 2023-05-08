@@ -14,7 +14,14 @@
 const nextConfig = {
 	reactStrictMode: true,
 	pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
-	
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'images.clerk.dev'
+			}
+		]
+	}
 }
   
 module.exports = nextConfig

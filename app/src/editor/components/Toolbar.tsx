@@ -10,7 +10,15 @@ const Tools: FC = () => {
 	return (
 		<div className="tools">
 			{/* share button prob won't bold on mobile - instead will just open the native share menu, desktop should bold though */}
-			<div onClick={() => setPanel('share')} className="button">
+			<div onClick={
+				() => {
+					if (navigator.canShare && navigator.canShare({ url: window.location.href })) {
+						navigator.share({ url: window.location.href })
+					} else {
+						setPanel('share')
+					}
+				}
+			} className="button">
 				<Share fill={panel === 'share'}/>
 			</div>
 			<div onClick={() => setPanel('spotlight')} className="button">

@@ -13,12 +13,6 @@ import { Formatting } from '@/types/custom'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-interface TwitterShareButtonProps {
-	text: string
-	url: string
-	hashtags: string[]
-}
-
 interface SharebuttonProps {
 	icon: ReactNode
 	url: string
@@ -121,6 +115,7 @@ const ShareContent: FC = () => {
 				div {
 					height: 260px;
 					width: 100%;
+					max-width: 600px;
 					border: 1px solid var(--accent-black);
 					border-radius: 8px;
 				}
@@ -194,7 +189,7 @@ const SpotlightContent: FC = () => {
 					display: flex;
 					flex-direction: column;
 					justify-content: center;
-					margin-left: 1.5rem;
+					margin-left: 20px;
 					color: white;
 				}
 
@@ -261,7 +256,7 @@ const SpotlightContent: FC = () => {
 					display: flex;
 					width: 100%;
 					flex-wrap: wrap;
-					margin-bottom: 32px;
+					margin-bottom: 28px;
 				}
 			`}</style>
 		</div>
@@ -338,6 +333,7 @@ const PreferencesContent: FC = () => {
 				}
 				.preferences {
 					width: 100%;
+					max-width: 600px;
 				}
 				input[type=radio], input[type=checkbox] {
 					display: none;
@@ -407,14 +403,15 @@ const PanelContent: FC = () => {
 			<style jsx>{`
 				div {
 					display: flex;
-					// justify-content: center;
+					justify-content: center;
 					overflow: scroll;
 					padding: 0px 24px 24px 24px;
+					flex: 1;
 				}
 
 				@media screen and (min-width: 1024px) {
 					div {
-						padding: 28px 24px 0px 24px;
+						padding: 28px 24px;
 					}
 				}
 			`}</style>
@@ -460,7 +457,7 @@ const PanelHeader: FC = () => {
 
 					.header {
 						font-size: 1.25rem;
-						font-weight: 600;
+						font-weight: 700;
 						color: white;
 						text-align: center;
 						margin: 4px 0px 20px 0px;
@@ -488,8 +485,8 @@ const PanelHeader: FC = () => {
 						position: absolute;
 						justify-content: center;
 						align-items: center;
-						right: 20px;
-						top: 26px;
+						right: 24px;
+						top: 30px;
 						border-radius: 20px;
 						border: 1px solid #262626;
 						cursor: pointer;
@@ -519,7 +516,8 @@ const PanelHeader: FC = () => {
 						}
 
 						.header {
-							margin: 28px 0px 28px 0px;
+							margin: 32px 0px 24px 0px;
+							text-align: left;
 						}
 
 						.back {
