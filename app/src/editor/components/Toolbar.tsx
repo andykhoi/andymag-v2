@@ -1,8 +1,9 @@
 import { FC } from 'react'
 import { Logo, Spotlight, Preferences, Share, Login } from '@/components/icons'
-import { SignedIn, SignedOut } from '@clerk/nextjs'
+import { SignedIn, SignedOut, useClerk } from '@clerk/nextjs'
 import { useEditorSettings } from '../context/SettingsContextProvider'
 import Link from 'next/link'
+import { User } from '@/components/icons/User'
 
 const Tools: FC = () => {
 	const { panel, setPanel } = useEditorSettings()
@@ -70,6 +71,7 @@ const Tools: FC = () => {
 }
 
 export const Toolbar: FC = () => {
+	const { signOut } = useClerk()
 	return (
 		<div className="toolbar">
 			<div className="logo">
@@ -77,14 +79,18 @@ export const Toolbar: FC = () => {
 			</div>
 			<Tools />
 			<div className="profile">
-				<SignedIn>
-					{/* view profile button */}
-				</SignedIn>
 				<SignedOut>
-						<Link href={'?a=sign-in'} shallow>
-							<Login />
-						</Link>
+					<Link href={'?a=sign-in'} shallow>
+						<Login />
+					</Link>
 				</SignedOut>
+				<SignedIn>
+					{/* <Link href={'?a=sign-in'} shallow> */}
+					<div onClick={() => signOut()}>
+						<User width={28} height={28} />
+					</div>
+					{/* </Link> */}
+				</SignedIn>
 			</div>
 			
 			<style jsx>{`

@@ -9,32 +9,32 @@ export const Font: FC<FontProps> = ({
 	children
 }) => {
 	const {
-		fontScale,
+		// fontScale,
 		fontSizingChart,
 		defaultFont,
 		fontFamilies
 	} = useFormatting()
 	
-	const getEditorFontFamily = () => {
-		const family = fontFamilies[`${defaultFont}`]
-		return family.style.fontFamily
-	}
+	// const getEditorFontFamily = () => {
+	// 	const family = fontFamilies[`${defaultFont}`]
+	// 	return family.style.fontFamily
+	// }
 
-	const getEditorFontSize = () => {
-		const fontSize = fontSizingChart[`${fontScale}`]
-		return fontSize
-	}
+	// const getEditorFontSize = () => {
+	// 	const fontSize = fontSizingChart[`${fontScale}`]
+	// 	return fontSize
+	// }
 
 	return (
 		<div
 		>
 			{ children }
-			<style jsx>{`
+			{/* <style jsx>{`
 				div {
 					font-family: ${getEditorFontFamily()};
 					font-size: ${getEditorFontSize()};
 				}
-			`}</style>
+			`}</style> */}
 		</div>
 	)
 }

@@ -17,10 +17,10 @@ interface WhatIsArtProps {
 const WhatIsArt: FC<WhatIsArtProps> = ({
 	contributors
 }) => {
-	// const { signOut } = useClerk()
 	const { updateActivity, isLoaded } = useActivity()
 
 	const router = useRouter()
+
 	// potensh stick this into _app.js
 	useEffect(() => {
 		if (isLoaded && updateActivity) {
@@ -30,16 +30,11 @@ const WhatIsArt: FC<WhatIsArtProps> = ({
 
 	return (
 		<>
-			{/* <Draggable>
-				<div>test me I'm ddraggableelelfdkjalfasfkdlsafdsa</div>
-			</Draggable> */}
-			{/* <button onClick={() => signOut()}>Sign out</button> */}
-			{/* <Image src={'/profile_pictures/karin_andersen.png'} alt="headshot of karin andersen" width={100} height={100}/> */}
 			<Editor
 				people={contributors}
 			>
 				<div>I feel the betadine solution drip down my hand as I scrub and the dirt on my back as I lie on the ground. I feel the sweat on my skin from the August humidity. Above me, I see wrinkles of gray and silver. I take in the surrealness of lying underneath nine thousand pounds of beauty. Our backdrop is the lush greenery of the Thai rainforests. I am 8,000 miles away from my house, yet I have never felt more at home. </div>
-				<div>I get up from under Kabu, having cleaned her wound, and stare into her honey-colored eyes. Although she is one hundred times my size, I've never felt so connected to an animal in my entire life. This moment seems ethereal.</div>
+				<div>I get up from under Kabu, having cleaned her wound, and stare into her honey-colored eyes. Although she is one hundred times my size, I&apos;ve never felt so connected to an animal in my entire life. This moment seems ethereal.</div>
 				<div>Kabu is the child of a logging elephant. When she was a calf, Kabu followed her mom as she pulled logs. At the age of two, a rolling log hit Kabu and broke her front left wrist. Since then, Kabu has been disabled. Her right paw has also been infected from the pressure of her weight it has taken her entire life.</div>
 				<div>Despite her injury, Kabu was forced back into the logging industry, as well as the breeding program. Both of her children were taken away from her. Her daughter was forced into the show industry. Her son died during the phajaan process, where elephants&apos; spirits are broken so they can work.</div>
 				<div>Kabu&apos;s story is painful, but her story gets to be told. Unlike most of her similars, she is recognized as an individual subject and not only as a specimen.</div>
@@ -48,10 +43,10 @@ const WhatIsArt: FC<WhatIsArtProps> = ({
 				<div>Of course, there are also animal fiction genres based on interspecies friendship and love. But in these cases, the animals&apos; intelligence is usually measured by their ability to behave like humans. In other words: we want animals to be the losers, or we want them to be like us.</div>
 			</Editor>
 		</>
-		
 	)
 }
 
+// this is blocking...fonts from being loaded when a url query param is added
 export const getStaticProps: GetStaticProps = async () => {
 	const apollo = initializeApollo()
 

@@ -1,17 +1,22 @@
-import { Logo, Explore, Preferences, Share } from '@/components/icons'
+import {
+	Logo,
+	// Explore,
+	Preferences,
+	Share
+} from '@/components/icons'
 import { FC } from 'react'
 
 const Tools: FC = () => {
 	return (
 		<div className="tools">
 			<div className="button">
-				<Share />
+				{/* <Share /> */}
 			</div>
 			<div className="button">
-				<Explore />
+				{/* <Explore /> */}
 			</div>
 			<div className="button">
-				<Preferences />
+				{/* <Preferences /> */}
 			</div>
 			<style jsx>{`
 				.button {

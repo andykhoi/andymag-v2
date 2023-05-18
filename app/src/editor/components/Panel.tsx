@@ -343,7 +343,7 @@ const PreferencesContent: FC = () => {
 					content: " ";
 					height: 12px;
 					width: 12px;
-					border-radius: 3px;
+					border-radius: 2px;
 					background-color: #db9033;
 					display: none;	
 					top: 4px;
@@ -368,7 +368,7 @@ const PreferencesContent: FC = () => {
 					width: 20px;
 					background-color: #3B3B40;
 					// margin-bottom: 6px;
-					border-radius: 4px;
+					border-radius: 3px;
 					margin-right: 16px;
 				}
 			`}</style>

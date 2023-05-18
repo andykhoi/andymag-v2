@@ -36,7 +36,7 @@ export const Editor: FC<EditorProps> = ({
 			<FormattingContextProvider {...formattingOptions}>
 				<PeopleContextProvider {...peopleOptions}>
 					<SettingsContextProvider>
-						<MobileHeader logo menu authentication user scrollIndicator/>
+						<MobileHeader logo authentication user scrollIndicator />
 						<Toolbar />
 						<Panel />
 						<ContentWrapper>
