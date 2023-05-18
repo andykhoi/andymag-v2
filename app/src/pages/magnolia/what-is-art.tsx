@@ -46,7 +46,7 @@ const WhatIsArt: FC<WhatIsArtProps> = ({
 	)
 }
 
-// this is blocking...fonts from being loaded when a url query param is added
+// this is blocking...fonts from being loaded when a url query param is added -- this isn't a problem when building for production - think there's a weird dev env bug in next. 
 export const getStaticProps: GetStaticProps = async () => {
 	const apollo = initializeApollo()
 
