@@ -103,6 +103,7 @@ export const MobileHeader: FC<MobileHeaderProps> = ({
 					width: 100%;
 					background: hsla(240, 4%, 9%, 0.83);
 					position: fixed;
+					z-index: 10;
 					top: 0;
 					backdrop-filter: blur(13px);
 					box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.39);

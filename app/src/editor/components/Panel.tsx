@@ -578,6 +578,7 @@ export const Panel: FC = () => {
 						width: 100%;
 						background-color: var(--main-black);
 						position: fixed;
+						z-index: 10;
 						display: flex;
 						flex-direction: column;
 						overflow: hidden;

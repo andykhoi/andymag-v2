@@ -39,19 +39,16 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 					<style jsx>{`
 						.content {
 							overscroll-behavior: contain;
-						}
-						.font {
-							font-family: ${fontFamilies[`${defaultFont}`].style.fontFamily};
-							font-size: ${fontSizingChart[`${userFormatting.fontScale}`]};
+							container: content / inline-size;
 						}
 						.grid {
 							display: grid;
 							width: 100%;
 							grid-auto-flow: column;
 						}
-						.grid > :global(div) {
-							grid-column: 2;
-						}
+						// .grid > :global(div) {
+						// 	grid-column: 2;
+						// }
 						@media screen and (min-width: 1024px) {
 							.content {
 								width: 100%;
@@ -64,12 +61,12 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 							grid-template-columns: 1fr min(${optimalContentWidth}, calc(100% - (2*${defaultPadding}))) 1fr;
 						}
 					`}</style>
-					{/* <style jsx>{`
-						// .content {
-						// 	flex: 1;
-						// 	overflow-y: scroll;
-						// }
-					`}</style> */}
+					<style jsx>{`
+						.font {
+							font-family: ${fontFamilies[`${defaultFont}`].style.fontFamily};
+							font-size: ${fontSizingChart[`${userFormatting.fontScale}`]};
+						}
+					`}</style>
 				</div>
 				:
 				<Spinner />
