@@ -46,9 +46,10 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 							width: 100%;
 							grid-auto-flow: column;
 						}
-						.grid > :global(div) {
-							grid-column: 2;
-						}
+						// content components determine their own grid placement
+						// .grid > :global(div) {
+						// 	grid-column: 2;
+						// }
 						@media screen and (min-width: 1024px) {
 							.content {
 								width: 100%;

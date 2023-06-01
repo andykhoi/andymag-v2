@@ -1,7 +1,11 @@
-import { FC, useMemo } from 'react'
+import { FC, PointerEvent, TouchEvent, useEffect, useMemo, useState, useRef } from 'react'
 import ReactPlayer from 'react-player'
 import { OnProgressProps } from 'react-player/base'
 import { PodcastPlayerContextProvider, usePodcastPlayer } from '../context/PodcastPlayerContextProvider'
+// import Slider from 'rc-slider'
+// import 'rc-slider/assets/index.css'
+import ReactSlider from 'react-slider'
+
 interface PodcastPlayerProps {
 	url: string
 	chapters: {
@@ -96,7 +100,6 @@ const Chapter: FC<ChapterProps> = ({
 	}
 
 	const chapter = getChapter()
-	// console.log(chapter)
 	return (
 		<div>
 			<p>{chapter ? chapter.name : '-------'}</p>
@@ -107,20 +110,34 @@ const Chapter: FC<ChapterProps> = ({
 const Player: FC<PlayerProps> = ({
 	url
 }) => {
-	const { play, setTime, setDuration, mute } = usePodcastPlayer()
-	
+	const { play, setTime, setDuration, mute, setIsReady, seek, seekTo } = usePodcastPlayer()
+	const playerRef = useRef<ReactPlayer>(null)
+
 	const onReadyHandler = (p: ReactPlayer) => {
 		setDuration(p.getDuration())
 		setTime(p.getCurrentTime())
 	}
 
 	const onProgressHandler = (e: OnProgressProps) => {
+		setIsReady(true)
 		if (play) setTime(e.playedSeconds)
 	}
+
+	const onSeekHandler = () => {
+		seekTo(null)
+	}
+
+	useEffect(() => {
+		if (playerRef.current && seek) {
+			playerRef.current.seekTo(seek)
+		}	
+	}, [seek])
 
 	return (
 		<ReactPlayer
 			url={url}
+			ref={playerRef}
+			onSeek={onSeekHandler}
 			config={{file:{forceAudio: true}}}
 			playing={play}
 			height={0}
@@ -132,17 +149,211 @@ const Player: FC<PlayerProps> = ({
 	)
 }
 
+// function ChapterTrack({ chapters, duration, ...props }) {
+// 	return (
+// 	  <div {...props}>
+// 		{chapters.map(chapter => {
+// 		  const positionPercent = (chapter.time / duration) * 100;
+// 		  return (
+// 			<div
+// 			  key={chapter.name}
+// 			  style={{
+// 				position: 'absolute',
+// 				left: `${positionPercent}%`,
+// 				width: '2px',
+// 				height: '100%',
+// 				background: 'blue',
+// 			  }}
+// 			/>
+// 		  );
+// 		})}
+// 	  </div>
+// 	);
+//   }
+
+// const Progress: FC = () => {
+// 	const { time, duration } = usePodcastPlayer()
+// 	return (
+// 		<div>
+// 			<ReactSlider
+// 				value={time ? time : 0} 
+// 				marks={[0, 230, 344, 440]} // chapter timestamps 
+// 				markClassName="podcastTimestamp"
+// 				max={duration ? duration : 0}
+// 				className="podcastAudioSlider"
+// 				trackClassName="podcastAudioTrack"				
+// 			/>
+// 			<style jsx>{`
+// 				:global(.podcastAudioSlider) {
+// 					height: 16px;
+// 				}
+// 				:global(.podcastAudioTrack) {
+// 					height: 16px;
+// 				}
+// 				:global(.podcastAudioTrack-0) {
+// 					height: 16px;
+// 					background-color: #5A5A5A;
+// 				}
+// 				:global(.podcastAudioTrack-1) {
+// 					height: 16px;
+// 					background-color: #FFFFFF;
+// 				}
+// 				:global(.podcastTimestamp) {
+// 					height: 100%;
+// 					width: 2px;
+// 					background-color: black;
+// 				}
+// 			`}</style>
+// 		</div>
+		
+// 	)
+// }
+
+const Slider: FC = () => {
+	const { isReady, time, duration, seekTo } = usePodcastPlayer()
+	const [seekPercentage, setSeekPercentage] = useState<null | number>(null)
+	const [dragging, setDragging] = useState<boolean>(false)
+	const sliderRef = useRef<HTMLDivElement>(null)
+
+	const onPointerDownHandler = (e: PointerEvent<HTMLDivElement>) => {
+		if (sliderRef.current) {
+			setDragging(true)
+			const pointerPercentage = (e.clientX - sliderRef.current.getBoundingClientRect().left) / sliderRef.current.offsetWidth
+			setSeekPercentage(pointerPercentage)
+		}	
+	}
+
+	const onPointerMoveHandler = (e: PointerEvent<HTMLDivElement>) => {
+		if (dragging && sliderRef.current) {
+			const pointerPercentage = (e.clientX - sliderRef.current.getBoundingClientRect().left) / sliderRef.current.offsetWidth
+			setSeekPercentage(pointerPercentage)
+		}
+	}
+
+	const onPointerUpHandler = (e: PointerEvent<HTMLDivElement>) => {
+		if (duration && seekPercentage) {
+			seekTo(seekPercentage * duration)
+		}
+		// setSeekPercentage(null)
+		setDragging(false)
+	}
+
+	// const calculateProgressWidth = () => {
+	// 	if (dragging) {
+	// 		// it's flashing back to this position
+	// 		if (seekPercentage) {
+	// 			return `${seekPercentage * 100}%`
+	// 		}
+	// 	} else {
+	// 		if (time && duration) {
+	// 			return `${(time / duration) * 100}%;`
+	// 		}
+	// 	}
+
+	// 	return '0%'
+	// }
+
+	useEffect(() => {
+		const handleWindowPointerMove = (e: globalThis.PointerEvent) => {
+			if (dragging && sliderRef.current) {
+				const pointerPercentage = (e.clientX - sliderRef.current.getBoundingClientRect().left) / sliderRef.current.offsetWidth
+				setSeekPercentage(pointerPercentage)
+			}
+		}
+
+		const handleWindowPointerUp = () => {
+			if (duration && seekPercentage) {
+				seekTo(seekPercentage * duration)
+			}
+			// setSeekPercentage(null)
+			setDragging(false)
+		}
+
+		window.addEventListener('pointermove', handleWindowPointerMove)
+		window.addEventListener('pointerup', handleWindowPointerUp)
+
+		return () => {
+			window.removeEventListener('pointermove', handleWindowPointerMove)
+			window.removeEventListener('pointerup', handleWindowPointerUp)
+		}
+
+	}, [dragging, duration, seekTo, seekPercentage])
+
+	return (
+		<div
+			className="slider"
+			ref={sliderRef}
+			onPointerDown={e => onPointerDownHandler(e)}
+			onPointerMove={e => onPointerMoveHandler(e)}
+			onPointerUp={e => onPointerUpHandler(e)}
+		>
+			<div className="seek" />
+			<div className="time" />
+			{/* <div className="progress" /> */}
+			<style jsx>{`
+				.slider {
+					height: 4px;
+					background-color: #5A5A5A;
+					border-radius: 1px;
+					cursor: pointer;
+					position: relative;
+				}
+			`}</style>
+			{/* <style jsx>{`
+				.progress {
+					width: ${ calculateProgressWidth() };
+					height: 4px;
+					background-color: #FFFFFF;
+					border-radius: 1px 0px 0px 1px;
+					position: absolute;
+				}
+			`}</style> */}
+			<style jsx>{`
+				.time {
+					visibility: ${ dragging ? 'hidden' : 'visible'};
+					width: ${(time && duration) ? `${(time / duration) * 100}%;` : '0;' }
+					height: 4px;
+					background-color: #FFFFFF;
+					border-radius: 1px 0px 0px 1px;
+					position: absolute;
+				}
+			`}</style>
+			<style jsx>{`
+				.seek {
+					width: ${ seekPercentage ? `${seekPercentage * 100}%` : 0};
+					height: 4px;
+					background-color: #FFFFFF;
+					border-radius: 1px 0px 0px 1px;
+					position: absolute;
+				}
+			`}</style>
+		</div>
+	)
+}
+
 export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 	url,
 	chapters
 }) => {
 	return (
-		<PodcastPlayerContextProvider>
-			<Play />
-			<Timer />
-			<Mute />
-			<Chapter chapters={chapters}/>
-			<Player url={url}/>
-		</PodcastPlayerContextProvider>
+		<div className="podcast-player">
+			<PodcastPlayerContextProvider>
+				<Play />
+				<Timer />
+				<Mute />
+				<Chapter chapters={chapters}/>
+				<Player url={url}/>
+				<Slider />
+				{/* <Progress /> */}
+			</PodcastPlayerContextProvider>
+			<style jsx>{`
+				.podcast-player {
+					grid-column: 1 / -1;
+					background-color: #000000;
+					padding: 8px;
+				}
+			`}</style>
+		</div>
+		
 	)
 }

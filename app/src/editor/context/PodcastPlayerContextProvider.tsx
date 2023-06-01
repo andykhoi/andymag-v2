@@ -9,6 +9,10 @@ interface PodcastPlayerContextType {
 	setDuration: Dispatch<SetStateAction<number | null>>
 	mute: boolean
 	toggleMute: () => void
+	seek: number | null
+	seekTo: (seek: number | null) => void
+	isReady: boolean
+	setIsReady:  Dispatch<SetStateAction<boolean>>
 }
 
 interface PodcastPlayerContextProviderProps {
@@ -23,7 +27,11 @@ const defaultPocdastPlayerContextValue = {
 	setDuration: () => null,
 	duration: null,
 	mute: false,
-	toggleMute: () => null
+	toggleMute: () => null,
+	seekTo: () => null,
+	seek: null,
+	isReady: false,
+	setIsReady: () => null
 }
 
 const PodcastPlayerContext = createContext<PodcastPlayerContextType>(defaultPocdastPlayerContextValue)
@@ -35,6 +43,12 @@ export const PodcastPlayerContextProvider: FC<PodcastPlayerContextProviderProps>
 	const [time, setTime] = useState<number | null>(defaultPocdastPlayerContextValue.time)
 	const [duration, setDuration] = useState<number | null>(defaultPocdastPlayerContextValue.duration)
 	const [mute, setMute] = useState<boolean>(defaultPocdastPlayerContextValue.mute)
+	const [seek, setSeek] = useState<null | number>(defaultPocdastPlayerContextValue.seek)
+	const [isReady, setIsReady] = useState<boolean>(defaultPocdastPlayerContextValue.isReady)
+
+	const seekTo = (seek: number | null) => {
+		setSeek(() => seek ? seek : null)
+	}
 
 	const togglePlay = () => {
 		setPlay(prev => !prev)
@@ -52,7 +66,11 @@ export const PodcastPlayerContextProvider: FC<PodcastPlayerContextProviderProps>
 		duration,
 		setDuration,
 		mute,
-		toggleMute
+		toggleMute,
+		seekTo,
+		seek,
+		isReady,
+		setIsReady
 	}
 
 	return (
