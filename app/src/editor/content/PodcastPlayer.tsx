@@ -2,14 +2,23 @@ import { FC, PointerEvent, TouchEvent, useEffect, useMemo, useState, useRef } fr
 import ReactPlayer from 'react-player'
 import { OnProgressProps } from 'react-player/base'
 import { PodcastPlayerContextProvider, usePodcastPlayer } from '../context/PodcastPlayerContextProvider'
+import { disableBodyScroll } from 'body-scroll-lock'
 // import Slider from 'rc-slider'
 // import 'rc-slider/assets/index.css'
 import ReactSlider from 'react-slider'
+import { PausePodcast, PlayPodcast } from '@/components/icons'
 
 interface PodcastPlayerProps {
 	url: string
 	chapters: {
-		time: string,
+		time: number,
+		name: string
+	}[]
+}
+
+interface SliderProps {
+	chapters: {
+		time: number,
 		name: string
 	}[]
 }
@@ -51,8 +60,9 @@ function convertSecondsToTimeFormat(seconds: number | null): string {
 const Play: FC = () => {
 	const { togglePlay, play } = usePodcastPlayer()
 	return (
-		<div>
-			<button onClick={() => togglePlay()}>{play ? 'pause' : 'play'}</button>
+		<div onClick={() => togglePlay()}>
+			{ !play ? <PlayPodcast /> : <PausePodcast /> }
+			{/* <button onClick={() => togglePlay()}>{play ? 'pause' : 'play'}</button> */}
 		</div>
 	)
 }
@@ -87,22 +97,28 @@ const Chapter: FC<ChapterProps> = ({
 	const { time } = usePodcastPlayer()
 
 	const getChapter = () => {
-		const index = chapters.findIndex((chapter => {
-			const chapterTimeInSeconds = convertTimeFormatToSeconds(chapter.time)
-			return time ? time >= chapterTimeInSeconds : null
-		}))
-		
-		if (index >= 0) {
-			return chapters[index]
-		}
+		if (!time) return null
 
-		return null
+		const index = chapters.findIndex((chapter => {
+			return time ? time <= chapter.time : null 
+		}))
+
+		if (index >= 0) {
+			return chapters[index - 1]
+		} else {
+			return chapters[chapters.length - 1]
+		}
 	}
 
 	const chapter = getChapter()
 	return (
 		<div>
-			<p>{chapter ? chapter.name : '-------'}</p>
+			<p>{chapter ? chapter.name : ''}</p>
+			<style jsx>{`
+				p {
+					color: white;
+				}
+			`}</style>
 		</div>
 	)	
 }
@@ -110,20 +126,24 @@ const Chapter: FC<ChapterProps> = ({
 const Player: FC<PlayerProps> = ({
 	url
 }) => {
-	const { play, setTime, setDuration, mute, setIsReady, seek, seekTo } = usePodcastPlayer()
+	const { play, setTime, setDuration, mute, setIsReady, seek, seekTo, time, isReady } = usePodcastPlayer()
 	const playerRef = useRef<ReactPlayer>(null)
 
 	const onReadyHandler = (p: ReactPlayer) => {
+		if (isReady) return
+		
+		setIsReady(true)
 		setDuration(p.getDuration())
 		setTime(p.getCurrentTime())
 	}
 
 	const onProgressHandler = (e: OnProgressProps) => {
-		setIsReady(true)
-		if (play) setTime(e.playedSeconds)
+		// if (play) setTime(e.playedSeconds)
+		setTime(e.playedSeconds)
 	}
 
-	const onSeekHandler = () => {
+	const onSeekHandler = (e: number) => {
+		// setTime(e)
 		seekTo(null)
 	}
 
@@ -137,7 +157,7 @@ const Player: FC<PlayerProps> = ({
 		<ReactPlayer
 			url={url}
 			ref={playerRef}
-			onSeek={onSeekHandler}
+			onSeek={e => onSeekHandler(e)}
 			config={{file:{forceAudio: true}}}
 			playing={play}
 			height={0}
@@ -149,75 +169,20 @@ const Player: FC<PlayerProps> = ({
 	)
 }
 
-// function ChapterTrack({ chapters, duration, ...props }) {
-// 	return (
-// 	  <div {...props}>
-// 		{chapters.map(chapter => {
-// 		  const positionPercent = (chapter.time / duration) * 100;
-// 		  return (
-// 			<div
-// 			  key={chapter.name}
-// 			  style={{
-// 				position: 'absolute',
-// 				left: `${positionPercent}%`,
-// 				width: '2px',
-// 				height: '100%',
-// 				background: 'blue',
-// 			  }}
-// 			/>
-// 		  );
-// 		})}
-// 	  </div>
-// 	);
-//   }
-
-// const Progress: FC = () => {
-// 	const { time, duration } = usePodcastPlayer()
-// 	return (
-// 		<div>
-// 			<ReactSlider
-// 				value={time ? time : 0} 
-// 				marks={[0, 230, 344, 440]} // chapter timestamps 
-// 				markClassName="podcastTimestamp"
-// 				max={duration ? duration : 0}
-// 				className="podcastAudioSlider"
-// 				trackClassName="podcastAudioTrack"				
-// 			/>
-// 			<style jsx>{`
-// 				:global(.podcastAudioSlider) {
-// 					height: 16px;
-// 				}
-// 				:global(.podcastAudioTrack) {
-// 					height: 16px;
-// 				}
-// 				:global(.podcastAudioTrack-0) {
-// 					height: 16px;
-// 					background-color: #5A5A5A;
-// 				}
-// 				:global(.podcastAudioTrack-1) {
-// 					height: 16px;
-// 					background-color: #FFFFFF;
-// 				}
-// 				:global(.podcastTimestamp) {
-// 					height: 100%;
-// 					width: 2px;
-// 					background-color: black;
-// 				}
-// 			`}</style>
-// 		</div>
-		
-// 	)
-// }
-
-const Slider: FC = () => {
-	const { isReady, time, duration, seekTo } = usePodcastPlayer()
+const Slider: FC<SliderProps> = ({
+	chapters
+}) => {
+	const { isReady, time, duration, seekTo, setTime } = usePodcastPlayer()
 	const [seekPercentage, setSeekPercentage] = useState<null | number>(null)
 	const [dragging, setDragging] = useState<boolean>(false)
 	const sliderRef = useRef<HTMLDivElement>(null)
-
+	
 	const onPointerDownHandler = (e: PointerEvent<HTMLDivElement>) => {
 		if (sliderRef.current) {
 			setDragging(true)
+			console.log('test')
+			// disableBodyScroll(sliderRef.current)
+			document.body.style.overflow = 'hidden'
 			const pointerPercentage = (e.clientX - sliderRef.current.getBoundingClientRect().left) / sliderRef.current.offsetWidth
 			setSeekPercentage(pointerPercentage)
 		}	
@@ -231,41 +196,32 @@ const Slider: FC = () => {
 	}
 
 	const onPointerUpHandler = (e: PointerEvent<HTMLDivElement>) => {
+		document.body.style.overflow = 'auto'
 		if (duration && seekPercentage) {
-			seekTo(seekPercentage * duration)
+			setTime(seekPercentage * duration)
+			seekTo(seekPercentage * duration) 
 		}
-		// setSeekPercentage(null)
 		setDragging(false)
 	}
 
-	// const calculateProgressWidth = () => {
-	// 	if (dragging) {
-	// 		// it's flashing back to this position
-	// 		if (seekPercentage) {
-	// 			return `${seekPercentage * 100}%`
-	// 		}
-	// 	} else {
-	// 		if (time && duration) {
-	// 			return `${(time / duration) * 100}%;`
-	// 		}
-	// 	}
-
-	// 	return '0%'
-	// }
-
 	useEffect(() => {
 		const handleWindowPointerMove = (e: globalThis.PointerEvent) => {
-			if (dragging && sliderRef.current) {
+			if (!dragging) return
+
+			if (sliderRef.current) {
 				const pointerPercentage = (e.clientX - sliderRef.current.getBoundingClientRect().left) / sliderRef.current.offsetWidth
 				setSeekPercentage(pointerPercentage)
 			}
 		}
 
 		const handleWindowPointerUp = () => {
+			if (!dragging) return 
+
+			document.body.style.overflow = 'auto'
 			if (duration && seekPercentage) {
+				setTime(seekPercentage * duration)
 				seekTo(seekPercentage * duration)
 			}
-			// setSeekPercentage(null)
 			setDragging(false)
 		}
 
@@ -277,7 +233,7 @@ const Slider: FC = () => {
 			window.removeEventListener('pointerup', handleWindowPointerUp)
 		}
 
-	}, [dragging, duration, seekTo, seekPercentage])
+	}, [dragging, duration, seekTo, seekPercentage, setTime])
 
 	return (
 		<div
@@ -287,27 +243,51 @@ const Slider: FC = () => {
 			onPointerMove={e => onPointerMoveHandler(e)}
 			onPointerUp={e => onPointerUpHandler(e)}
 		>
-			<div className="seek" />
+			<div className="slider-track" />
 			<div className="time" />
-			{/* <div className="progress" /> */}
+			<div className="seek" />
+			{
+				chapters.map((c, i) => {
+					// part 1 will always start at 0:00, don't need a divider at the very start of the track
+					if (i > 0) {
+						return (
+							<div key={`divider_${c.name}`} className="chapter-divider" style={{ position: 'absolute', left: duration ? `${(c.time / duration) * 100}%` : 0}}/>
+						)
+					}
+				}) 
+			}
+			<div className="chapter-labels">
+				{
+					chapters.map((c, i) => 
+						<div
+							className="chapter-label"
+							key={`label_${c.name}`}
+							style={{
+								position: 'absolute',
+								left: duration ? `${(c.time / duration) * 100}%` : 0,
+								zIndex: i,
+							}}
+						>
+							<p className="chapter-part">Part { i + 1 }</p>
+							<p className="chapter-name">{c.name}</p>
+						</div>
+					)
+				}
+			</div>
 			<style jsx>{`
 				.slider {
+					position: relative;
+					height: 34px;
+				}
+				.slider-track {
 					height: 4px;
 					background-color: #5A5A5A;
 					border-radius: 1px;
 					cursor: pointer;
-					position: relative;
+					position: absolute;
+					width: 100%;
 				}
 			`}</style>
-			{/* <style jsx>{`
-				.progress {
-					width: ${ calculateProgressWidth() };
-					height: 4px;
-					background-color: #FFFFFF;
-					border-radius: 1px 0px 0px 1px;
-					position: absolute;
-				}
-			`}</style> */}
 			<style jsx>{`
 				.time {
 					visibility: ${ dragging ? 'hidden' : 'visible'};
@@ -319,12 +299,39 @@ const Slider: FC = () => {
 				}
 			`}</style>
 			<style jsx>{`
+				.chapter-divider {
+					width: 2px;
+					background-color: black;
+					height: 4px;
+				}
+				.chapter-labels {
+					padding-top: 8px;
+				}
+				.chapter-label {
+					display: flex;
+					color: white;
+					font-size: 0.75rem;
+					background-color: black;
+					padding: 8px;
+					border-radius: 4px;
+				}
+				.chapter-part {
+					font-weight: 900;
+					color: #535353;
+					padding-right: 12px;
+				}
+				.chapter-name {
+					font-weight: 700;
+				}
+			`}</style>
+			<style jsx>{`
 				.seek {
 					width: ${ seekPercentage ? `${seekPercentage * 100}%` : 0};
 					height: 4px;
 					background-color: #FFFFFF;
 					border-radius: 1px 0px 0px 1px;
 					position: absolute;
+					// background-color: blue;
 				}
 			`}</style>
 		</div>
@@ -338,19 +345,28 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 	return (
 		<div className="podcast-player">
 			<PodcastPlayerContextProvider>
-				<Play />
-				<Timer />
-				<Mute />
-				<Chapter chapters={chapters}/>
-				<Player url={url}/>
-				<Slider />
-				{/* <Progress /> */}
+				<div className="controls">
+					<Play />
+					<Timer />
+					<Mute />
+				</div>
+				<div className="slider-wrap">
+					<Chapter chapters={chapters}/>
+					<Slider chapters={chapters} />
+					<Player url={url}/>
+				</div>
 			</PodcastPlayerContextProvider>
 			<style jsx>{`
 				.podcast-player {
 					grid-column: 1 / -1;
 					background-color: #000000;
 					padding: 8px;
+				}
+				.controls {
+					padding: 8px;
+				}
+				.slider-wrap {
+					font-family: Inter;
 				}
 			`}</style>
 		</div>

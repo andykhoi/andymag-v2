@@ -9,7 +9,7 @@ interface PodcastPlayerContextType {
 	setDuration: Dispatch<SetStateAction<number | null>>
 	mute: boolean
 	toggleMute: () => void
-	seek: number | null
+	seek: number | null // could simplify by attaching player ref to context and making seekTo a helper function that wraps the player's seekTo method
 	seekTo: (seek: number | null) => void
 	isReady: boolean
 	setIsReady:  Dispatch<SetStateAction<boolean>>

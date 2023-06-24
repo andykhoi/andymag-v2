@@ -34,7 +34,7 @@ const WhatIsArt: FC<WhatIsArtProps> = ({
 		<Editor
 			people={contributors}
 		>
-			<PodcastPlayer url={'/audio/dafna.webm'} chapters={[{ time: '00:00', name: 'Introduction'}]}/>
+			<PodcastPlayer url={'/audio/dafna.webm'} chapters={[{ time: 0, name: 'Introduction'}, { time: 40, name: 'Who I Am'}, { time: 500, name: 'The Prolouge'}, { time: 700, name: 'Before He Popped the Question'}, { time: 900, name: 'The Relationship'}]}/>
 		</Editor>
 	)
 }
