@@ -6,7 +6,7 @@ import { disableBodyScroll } from 'body-scroll-lock'
 // import Slider from 'rc-slider'
 // import 'rc-slider/assets/index.css'
 import ReactSlider from 'react-slider'
-import { PausePodcast, PlayPodcast } from '@/components/icons'
+import { Mute, PausePodcast, PlayPodcast, Unmute, Transcript } from '@/components/icons'
 
 interface PodcastPlayerProps {
 	url: string
@@ -67,11 +67,34 @@ const Play: FC = () => {
 	)
 }
 
-const Mute: FC = () => {
+const MuteButton: FC = () => {
 	const { mute, toggleMute } = usePodcastPlayer()
 	return (
 		<div>
-			<button onClick={() => toggleMute()}>{mute ? 'unmute' : 'mute'}</button>
+			{
+				mute ? <button onClick={() => toggleMute()}><Unmute /></button> : <button onClick={() => toggleMute()}><Mute /></button>
+			}
+			<style jsx>{`
+				button {
+					background: none;
+					border: none;
+				}
+			`}</style>
+		</div>
+	)
+}
+
+const TranscriptButton: FC = () => {
+	const { transcriptScrolling, toggleTranscriptScrolling } = usePodcastPlayer()
+	return (
+		<div>
+			<button onClick={() => toggleTranscriptScrolling()}><Transcript color={transcriptScrolling ? 'white' : '#5A5A5A'}/></button>
+			<style jsx>{`
+				button {
+					background: none;
+					border: none;
+				}
+			`}</style>
 		</div>
 	)
 }
@@ -87,6 +110,11 @@ const Timer: FC = () => {
 	return (
 		<div className="timer">
 			<p>{ converttedTime } / { converttedDuration }</p>
+			<style jsx>{`
+				.timer {
+					color: #5A5A5A;	
+				}
+			`}</style>
 		</div>
 	)
 }
@@ -248,7 +276,7 @@ const Slider: FC<SliderProps> = ({
 			<div className="seek" />
 			{
 				chapters.map((c, i) => {
-					// part 1 will always start at 0:00, don't need a divider at the very start of the track
+					// part 1 will usually start at 0:00, don't need a divider at the very start of the track
 					if (i > 0) {
 						return (
 							<div key={`divider_${c.name}`} className="chapter-divider" style={{ position: 'absolute', left: duration ? `${(c.time / duration) * 100}%` : 0}}/>
@@ -256,7 +284,7 @@ const Slider: FC<SliderProps> = ({
 					}
 				}) 
 			}
-			<div className="chapter-labels">
+			{/* <div className="chapter-labels">
 				{
 					chapters.map((c, i) => 
 						<div
@@ -273,14 +301,15 @@ const Slider: FC<SliderProps> = ({
 						</div>
 					)
 				}
-			</div>
+			</div> */}
 			<style jsx>{`
 				.slider {
 					position: relative;
-					height: 34px;
+					height: 10px;
+					
 				}
 				.slider-track {
-					height: 4px;
+					height: 6px;
 					background-color: #5A5A5A;
 					border-radius: 1px;
 					cursor: pointer;
@@ -292,7 +321,7 @@ const Slider: FC<SliderProps> = ({
 				.time {
 					visibility: ${ dragging ? 'hidden' : 'visible'};
 					width: ${(time && duration) ? `${(time / duration) * 100}%;` : '0;' }
-					height: 4px;
+					height: 6px;
 					background-color: #FFFFFF;
 					border-radius: 1px 0px 0px 1px;
 					position: absolute;
@@ -302,7 +331,7 @@ const Slider: FC<SliderProps> = ({
 				.chapter-divider {
 					width: 2px;
 					background-color: black;
-					height: 4px;
+					height: 6px;
 				}
 				.chapter-labels {
 					padding-top: 8px;
@@ -327,11 +356,10 @@ const Slider: FC<SliderProps> = ({
 			<style jsx>{`
 				.seek {
 					width: ${ seekPercentage ? `${seekPercentage * 100}%` : 0};
-					height: 4px;
+					height: 6px;
 					background-color: #FFFFFF;
 					border-radius: 1px 0px 0px 1px;
 					position: absolute;
-					// background-color: blue;
 				}
 			`}</style>
 		</div>
@@ -347,11 +375,16 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 			<PodcastPlayerContextProvider>
 				<div className="controls">
 					<Play />
-					<Timer />
-					<Mute />
+					<div>
+						<Chapter chapters={chapters}/>
+						<Timer />
+					</div>
+					<div>
+						<MuteButton />
+						<TranscriptButton />
+					</div>
 				</div>
 				<div className="slider-wrap">
-					<Chapter chapters={chapters}/>
 					<Slider chapters={chapters} />
 					<Player url={url}/>
 				</div>
@@ -361,13 +394,14 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 					grid-column: 1 / -1;
 					background-color: #000000;
 					padding: 8px;
+					font-family: Inter;
 				}
 				.controls {
 					padding: 8px;
 				}
-				.slider-wrap {
-					font-family: Inter;
-				}
+				// .slider-wrap {
+				// 	font-family: Inter;
+				// }
 			`}</style>
 		</div>
 		

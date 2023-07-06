@@ -13,6 +13,8 @@ interface PodcastPlayerContextType {
 	seekTo: (seek: number | null) => void
 	isReady: boolean
 	setIsReady:  Dispatch<SetStateAction<boolean>>
+	toggleTranscriptScrolling: () => void
+	transcriptScrolling: boolean
 }
 
 interface PodcastPlayerContextProviderProps {
@@ -31,7 +33,9 @@ const defaultPocdastPlayerContextValue = {
 	seekTo: () => null,
 	seek: null,
 	isReady: false,
-	setIsReady: () => null
+	setIsReady: () => null,
+	toggleTranscriptScrolling: () => null,
+	transcriptScrolling: true
 }
 
 const PodcastPlayerContext = createContext<PodcastPlayerContextType>(defaultPocdastPlayerContextValue)
@@ -40,6 +44,7 @@ export const PodcastPlayerContextProvider: FC<PodcastPlayerContextProviderProps>
 	children
 }) => {
 	const [play, setPlay] = useState<boolean>(defaultPocdastPlayerContextValue.play)
+	const [transcriptScrolling, setTranscriptScrolling] = useState<boolean>(defaultPocdastPlayerContextValue.transcriptScrolling)
 	const [time, setTime] = useState<number | null>(defaultPocdastPlayerContextValue.time)
 	const [duration, setDuration] = useState<number | null>(defaultPocdastPlayerContextValue.duration)
 	const [mute, setMute] = useState<boolean>(defaultPocdastPlayerContextValue.mute)
@@ -58,6 +63,10 @@ export const PodcastPlayerContextProvider: FC<PodcastPlayerContextProviderProps>
 		setMute(prev => !prev)
 	}
 
+	const toggleTranscriptScrolling = () => {
+		setTranscriptScrolling(prev => !prev)
+	}
+
 	const store = {
 		play,
 		time,
@@ -70,7 +79,9 @@ export const PodcastPlayerContextProvider: FC<PodcastPlayerContextProviderProps>
 		seekTo,
 		seek,
 		isReady,
-		setIsReady
+		setIsReady,
+		toggleTranscriptScrolling,
+		transcriptScrolling
 	}
 
 	return (
