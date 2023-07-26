@@ -1,6 +1,6 @@
-import { FC, ReactNode, useEffect } from 'react'
-import { Font } from './Font'
-import { Grid } from './Grid'
+import { FC, ReactNode, useEffect, Children } from 'react'
+// import { Font } from './Font'
+// import { Grid } from './Grid'
 import { useFormatting } from '../context/FormattingContextProvider'
 import { useActivity, useUserFormatting } from '@/contexts/UserContext'
 import { Spinner } from '@/components/Spinner'
@@ -22,7 +22,7 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 		optimalContentWidth,
 		defaultPadding,
 	} = useFormatting()
-
+	const arrayChildren = Children.toArray(children)
 	return (
 		<>
 			{/* probably better loading would be showing loader all the way until the content wrapper content is mounted.
@@ -31,44 +31,51 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 			*/}
 			{	(isLoaded && userFormatting) ?
 				<div className="content">
-					<div className="font">
+					{ children }
+					{/* <div className="font">
 						<div className="grid">
 							{ children }
 						</div>
-					</div>
+					</div> */}
 					<style jsx>{`
-						.content {
-							overscroll-behavior: contain;
-							container: content / inline-size;
-						}
-						.grid {
-							display: grid;
-							width: 100%;
-							grid-auto-flow: column;
-						}
-						// content components determine their own grid placement
-						// .grid > :global(div) {
-						// 	grid-column: 2;
-						// }
-						@media screen and (min-width: 1024px) {
 							.content {
 								width: 100%;
-								overflow-y: scroll;
+								overscroll-behavior: contain;
+								container: content / normal;
+								height: 100%;
+								overflow: visible;
 							}
-						}
+							// .grid {
+							// 	display: grid;
+							// 	width: 100%;
+							// 	grid-template-rows: auto;
+							// 	height: 100%;
+							// }
+							@media screen and (min-width: 1024px) {
+								.content {
+									overflow-y: scroll;
+								}
+							}
 					`}</style>
-					<style jsx>{`
+					{/* <style jsx>{`
 						.grid {
 							grid-template-columns: 1fr min(${optimalContentWidth}, calc(100% - (2*${defaultPadding}))) 1fr;
 						}
-					`}</style>
+					`}</style> */}
 					<style jsx>{`
-						.font {
+						.content {
 							font-family: ${fontFamilies[`${defaultFont}`].style.fontFamily};
 							font-size: ${fontSizingChart[`${userFormatting.fontScale}`]};
 						}
 					`}</style>
-				</div>
+					<style jsx>{`
+						@media screen and (min-width: 1024px) {
+							.content {
+								container: content / inline-size;
+							}
+						}
+					`}</style>
+				</div>	
 				:
 				<Spinner />
 			}
@@ -76,6 +83,92 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 		
 	)
 }
+
+
+// import { FC, ReactNode, useEffect, Children } from 'react'
+// import { Font } from './Font'
+// import { Grid } from './Grid'
+// import { useFormatting } from '../context/FormattingContextProvider'
+// import { useActivity, useUserFormatting } from '@/contexts/UserContext'
+// import { Spinner } from '@/components/Spinner'
+// import { useUser } from '@clerk/nextjs'
+
+// interface ContentWrapperProps {
+// 	children: ReactNode
+// }
+
+// export const ContentWrapper: FC<ContentWrapperProps> = ({
+// 	children
+// }) => {
+// 	const { isLoaded, formatting: userFormatting } = useUserFormatting()
+	
+// 	const {
+// 		fontSizingChart,
+// 		defaultFont,
+// 		fontFamilies,
+// 		optimalContentWidth,
+// 		defaultPadding,
+// 	} = useFormatting()
+// 	const arrayChildren = Children.toArray(children)
+// 	return (
+// 		<>
+// 			{/* probably better loading would be showing loader all the way until the content wrapper content is mounted.
+// 				basically something like a loader overlay that sits on top until content is "ready" 
+// 				- probably can write some JS event to watch if content above the fold has loaded
+// 			*/}
+// 			{	(isLoaded && userFormatting) ?
+// 				<div className="content">
+// 					<div className="font">
+// 						<div className="grid">
+// 							{ children }
+// 						</div>
+// 					</div>
+// 					<style jsx>{`
+// 							.content {
+// 								width: 100%;
+// 								overscroll-behavior: contain;
+// 								container: content / normal;
+// 								height: 100%;
+// 							}
+// 							.grid {
+// 								display: grid;
+// 								width: 100%;
+// 								grid-template-rows: auto;
+// 								height: 100%;
+// 							}
+// 							@media screen and (min-width: 1024px) {
+// 								.content {
+// 									overflow-y: scroll;
+// 								}
+// 							}
+// 					`}</style>
+// 					<style jsx>{`
+// 						.grid {
+// 							grid-template-columns: 1fr min(${optimalContentWidth}, calc(100% - (2*${defaultPadding}))) 1fr;
+// 						}
+// 					`}</style>
+// 					<style jsx>{`
+// 						.font {
+// 							font-family: ${fontFamilies[`${defaultFont}`].style.fontFamily};
+// 							font-size: ${fontSizingChart[`${userFormatting.fontScale}`]};
+// 							height: 100%;
+// 						}
+// 					`}</style>
+// 					<style jsx>{`
+// 						@media screen and (min-width: 1024px) {
+// 							.content {
+// 								container: content / inline-size;
+// 							}
+// 						}
+// 					`}</style>
+// 				</div>	
+// 				:
+// 				<Spinner />
+// 			}
+// 		</>
+		
+// 	)
+// }
 
 // export const ContentWrapper: FC<ContentWrapperProps> = ({
 // 	children

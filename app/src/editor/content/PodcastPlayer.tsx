@@ -7,9 +7,10 @@ import { disableBodyScroll } from 'body-scroll-lock'
 // import 'rc-slider/assets/index.css'
 import ReactSlider from 'react-slider'
 import { Mute, PausePodcast, PlayPodcast, Unmute, Transcript } from '@/components/icons'
+import { useFormatting } from '../context/FormattingContextProvider';
 
-interface PodcastPlayerProps {
-	url: string
+export interface PodcastPlayerProps {
+	audioUrl: string
 	chapters: {
 		time: number,
 		name: string
@@ -59,9 +60,22 @@ function convertSecondsToTimeFormat(seconds: number | null): string {
 
 const Play: FC = () => {
 	const { togglePlay, play } = usePodcastPlayer()
+	const { optimalContentWidth, defaultPadding } = useFormatting()
 	return (
 		<div onClick={() => togglePlay()}>
 			{ !play ? <PlayPodcast /> : <PausePodcast /> }
+			<style jsx>{`
+				div {
+					width: 36px;
+					height: 36px;
+				}
+				@container content (min-width: calc(${optimalContentWidth} + 2 * ${defaultPadding})) {
+					div {
+						width: 40px;
+						height: 40px;
+					}
+				}
+			`}</style>
 			{/* <button onClick={() => togglePlay()}>{play ? 'pause' : 'play'}</button> */}
 		</div>
 	)
@@ -70,14 +84,25 @@ const Play: FC = () => {
 const MuteButton: FC = () => {
 	const { mute, toggleMute } = usePodcastPlayer()
 	return (
-		<div>
+		<div className="mute-button">
 			{
-				mute ? <button onClick={() => toggleMute()}><Unmute /></button> : <button onClick={() => toggleMute()}><Mute /></button>
+				mute ? <button className="unmute" onClick={() => toggleMute()}><Unmute /></button> : <button className="mute" onClick={() => toggleMute()}><Mute /></button>
 			}
 			<style jsx>{`
 				button {
 					background: none;
 					border: none;
+					padding: 0;
+					padding-left: 16px;
+				}
+				// .unmute {
+				// 	padding-bottom: 9px;
+				// }
+				// .mute {
+				// 	padding-bottom: 11px;	
+				// }
+				.mute-button {
+					display: flex;
 				}
 			`}</style>
 		</div>
@@ -87,12 +112,18 @@ const MuteButton: FC = () => {
 const TranscriptButton: FC = () => {
 	const { transcriptScrolling, toggleTranscriptScrolling } = usePodcastPlayer()
 	return (
-		<div>
+		<div className="transcript-button">
 			<button onClick={() => toggleTranscriptScrolling()}><Transcript color={transcriptScrolling ? 'white' : '#5A5A5A'}/></button>
 			<style jsx>{`
 				button {
 					background: none;
 					border: none;
+					padding: 0;
+					padding-right: 16px;
+					border-right: 1px solid #474747; 
+				}
+				.transcript-button {
+					display: flex;
 				}
 			`}</style>
 		</div>
@@ -113,6 +144,8 @@ const Timer: FC = () => {
 			<style jsx>{`
 				.timer {
 					color: #5A5A5A;	
+					font-size: 0.6em;
+					font-weight: 700;
 				}
 			`}</style>
 		</div>
@@ -141,10 +174,15 @@ const Chapter: FC<ChapterProps> = ({
 	const chapter = getChapter()
 	return (
 		<div>
-			<p>{chapter ? chapter.name : ''}</p>
+			<p>{chapter ? chapter.name : ''} / Fleeting But Not Fleeting</p>
 			<style jsx>{`
 				p {
 					color: white;
+					font-size: 0.7em;
+					font-weight: 500;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					overflow: hidden;
 				}
 			`}</style>
 		</div>
@@ -154,8 +192,17 @@ const Chapter: FC<ChapterProps> = ({
 const Player: FC<PlayerProps> = ({
 	url
 }) => {
-	const { play, setTime, setDuration, mute, setIsReady, seek, seekTo, time, isReady } = usePodcastPlayer()
+	const { play, setTime, setDuration, mute, setIsReady, seek, seekTo, time, isReady, transcriptParts } = usePodcastPlayer()
 	const playerRef = useRef<ReactPlayer>(null)
+
+	const scrollToTranscript = (time: number) => {
+		if (transcriptParts.length > 0) {
+			const transcriptIndex = transcriptParts.findIndex(part => {
+				return time < part.time
+			})
+			if (transcriptIndex > -1) transcriptParts[transcriptIndex - 1].ref.current?.scrollIntoView({ behavior: 'smooth' })
+		}	
+	}
 
 	const onReadyHandler = (p: ReactPlayer) => {
 		if (isReady) return
@@ -168,6 +215,7 @@ const Player: FC<PlayerProps> = ({
 	const onProgressHandler = (e: OnProgressProps) => {
 		// if (play) setTime(e.playedSeconds)
 		setTime(e.playedSeconds)
+		scrollToTranscript(e.playedSeconds)
 	}
 
 	const onSeekHandler = (e: number) => {
@@ -208,7 +256,7 @@ const Slider: FC<SliderProps> = ({
 	const onPointerDownHandler = (e: PointerEvent<HTMLDivElement>) => {
 		if (sliderRef.current) {
 			setDragging(true)
-			console.log('test')
+			// console.log('test')
 			// disableBodyScroll(sliderRef.current)
 			document.body.style.overflow = 'hidden'
 			const pointerPercentage = (e.clientX - sliderRef.current.getBoundingClientRect().left) / sliderRef.current.offsetWidth
@@ -284,29 +332,12 @@ const Slider: FC<SliderProps> = ({
 					}
 				}) 
 			}
-			{/* <div className="chapter-labels">
-				{
-					chapters.map((c, i) => 
-						<div
-							className="chapter-label"
-							key={`label_${c.name}`}
-							style={{
-								position: 'absolute',
-								left: duration ? `${(c.time / duration) * 100}%` : 0,
-								zIndex: i,
-							}}
-						>
-							<p className="chapter-part">Part { i + 1 }</p>
-							<p className="chapter-name">{c.name}</p>
-						</div>
-					)
-				}
-			</div> */}
 			<style jsx>{`
 				.slider {
 					position: relative;
 					height: 10px;
-					
+					display: flex;
+					align-items: center;
 				}
 				.slider-track {
 					height: 6px;
@@ -329,7 +360,7 @@ const Slider: FC<SliderProps> = ({
 			`}</style>
 			<style jsx>{`
 				.chapter-divider {
-					width: 2px;
+					width: 4px;
 					background-color: black;
 					height: 6px;
 				}
@@ -367,42 +398,94 @@ const Slider: FC<SliderProps> = ({
 }
 
 export const PodcastPlayer: FC<PodcastPlayerProps> = ({
-	url,
+	audioUrl,
 	chapters
 }) => {
+	const { optimalContentWidth, defaultPadding } = useFormatting()
 	return (
 		<div className="podcast-player">
-			<PodcastPlayerContextProvider>
-				<div className="controls">
+				<div className="screen">
 					<Play />
-					<div>
+					<div className="info">
 						<Chapter chapters={chapters}/>
 						<Timer />
 					</div>
-					<div>
-						<MuteButton />
+					<div className="controls">
 						<TranscriptButton />
+						<MuteButton />
 					</div>
 				</div>
 				<div className="slider-wrap">
 					<Slider chapters={chapters} />
-					<Player url={url}/>
+					<Player url={audioUrl}/>
 				</div>
-			</PodcastPlayerContextProvider>
 			<style jsx>{`
 				.podcast-player {
+					--default-padding: 16px;
+					--default-margin: 0px;
+					--optimal-padding: 32px 0px;
+					--optimal-margin: 0px 52px;
+					--default-screen-margin: 0px 0px 22px 0px;
+					--optimal-screen-margin: 0px 0px 28px 0px;
 					grid-column: 1 / -1;
 					background-color: #000000;
-					padding: 8px;
+					border-bottom: 1px solid #212121;
+					padding: var(--default-padding);
 					font-family: Inter;
+					transition: padding 165ms ease-in-out;
+					position: sticky;
+					top: 0;
+				}
+				.screen {
+					display: flex;
+					align-items: center;
+					margin-bottom: 22px;
+				}
+				.info {
+					flex: 2;
+					padding: 0px 28px;	
+					min-width: 0px;
 				}
 				.controls {
-					padding: 8px;
+					display: flex;
+					align-items: center;
 				}
-				// .slider-wrap {
-				// 	font-family: Inter;
-				// }
 			`}</style>
+			<style jsx>{`
+				@media screen and (min-width: calc(${optimalContentWidth} + 2 * ${defaultPadding})) {
+					.podcast-player {
+						padding: var(--optimal-padding);
+						margin: var(--optimal-margin);
+					}
+					.screen {
+						margin: var(--optimal-screen-margin);
+					}
+				}
+			`}</style>
+			{/* on sidebar layout monitor the content container and resize the component accordingly (revert to default styling if container < optimal) */}
+			<style jsx>{`
+				@container content (max-width: calc(${optimalContentWidth} + 2 * ${defaultPadding} - 1px)) {
+					.podcast-player {
+						padding: var(--default-padding);
+						margin: var(--default-margin)
+					}
+					.screen {
+						margin: var(--default-screen-margin);
+					}
+				}
+			`}</style>
+			{/* <style jsx>{`
+				@container content (min-width: calc(${optimalContentWidth} + 2 * ${defaultPadding})) {
+					.podcast-player {
+						padding: 32px 52px;
+						// background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, #000 11.28%);
+					}
+					.screen {
+						padding: 0px;
+						margin-bottom: 28px;
+					}
+				}
+			`}</style> */}
 		</div>
 		
 	)

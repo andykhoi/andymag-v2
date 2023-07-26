@@ -1,5 +1,6 @@
 import { FC, ReactNode } from 'react'
 import PropTypes from 'prop-types'
+import { Row } from '../components/Row'
 // import { EditorItem, EditorItemProps } from '../components/EditorItem'
 
 // interface TextProps extends EditorItemProps {
@@ -27,9 +28,17 @@ interface TextProps {
 
 export const Text: FC<TextProps> = (props) => {
 	return (
-		<div>
-			{ props.children }	
-		</div>
+		<Row height="auto">
+			<div>
+				{ props.children }	
+				<style jsx>{`
+					div {
+						grid-column: 2;
+					}
+				`}</style>
+			</div>
+		</Row>
+		
 	)
 }
 

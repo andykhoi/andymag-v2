@@ -18,12 +18,14 @@ type EditorProps = FormattingContextProviderProps & PeopleContextProviderProps &
 
 export const Editor: FC<EditorProps> = ({
 	defaultPadding,
+	fontFamilies,
 	optimalContentWidth,
 	fontSizingChart,
 	people,
 	children
 }) => {
 	const formattingOptions = {
+		fontFamilies,
 		defaultPadding,
 		optimalContentWidth,
 		fontSizingChart,
@@ -36,7 +38,7 @@ export const Editor: FC<EditorProps> = ({
 			<FormattingContextProvider {...formattingOptions}>
 				<PeopleContextProvider {...peopleOptions}>
 					<SettingsContextProvider>
-						{/* <MobileHeader logo authentication user scrollIndicator /> */}
+						<MobileHeader logo authentication user scrollIndicator />
 						<Toolbar />
 						<Panel />
 						<ContentWrapper>
@@ -46,9 +48,11 @@ export const Editor: FC<EditorProps> = ({
 				</PeopleContextProvider>
 			</FormattingContextProvider>
 			<style jsx>{`
+				.editor {
+					height: 100%;
+				}
 				@media screen and (min-width: 1024px) {
 					.editor {
-						height: 100%;
 						display: flex;
 					}
 				}

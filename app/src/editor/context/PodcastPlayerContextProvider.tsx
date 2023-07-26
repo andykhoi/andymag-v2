@@ -1,4 +1,10 @@
-import { createContext, FC, ReactNode, useState, Dispatch, SetStateAction, useContext } from 'react'
+import { createContext, FC, ReactNode, useState, Dispatch, SetStateAction, useContext, RefObject, useCallback, useRef } from 'react'
+import { TranscriptPart } from '../content/TranscriptPart'
+
+type TranscriptPart = {
+	ref: RefObject<HTMLDivElement>
+	time: number
+}
 
 interface PodcastPlayerContextType {
 	play: boolean
@@ -15,6 +21,10 @@ interface PodcastPlayerContextType {
 	setIsReady:  Dispatch<SetStateAction<boolean>>
 	toggleTranscriptScrolling: () => void
 	transcriptScrolling: boolean
+	transcriptParts: TranscriptPart[]
+	// setTranscriptParts: Dispatch<SetStateAction<TranscriptPart[]>>
+	addTranscriptPart: (part: TranscriptPart) => void
+	removeTranscriptPart: (ref: RefObject<HTMLDivElement>) => void
 }
 
 interface PodcastPlayerContextProviderProps {
@@ -35,7 +45,11 @@ const defaultPocdastPlayerContextValue = {
 	isReady: false,
 	setIsReady: () => null,
 	toggleTranscriptScrolling: () => null,
-	transcriptScrolling: true
+	transcriptScrolling: true,
+	transcriptParts: [],
+	addTranscriptPart: () => null,
+	// setTranscriptParts: () => null,
+	removeTranscriptPart: () => null
 }
 
 const PodcastPlayerContext = createContext<PodcastPlayerContextType>(defaultPocdastPlayerContextValue)
@@ -45,11 +59,14 @@ export const PodcastPlayerContextProvider: FC<PodcastPlayerContextProviderProps>
 }) => {
 	const [play, setPlay] = useState<boolean>(defaultPocdastPlayerContextValue.play)
 	const [transcriptScrolling, setTranscriptScrolling] = useState<boolean>(defaultPocdastPlayerContextValue.transcriptScrolling)
+	// const [transcriptParts, setTranscriptParts] = useState<TranscriptPart[]>(defaultPocdastPlayerContextValue.transcriptParts)
 	const [time, setTime] = useState<number | null>(defaultPocdastPlayerContextValue.time)
 	const [duration, setDuration] = useState<number | null>(defaultPocdastPlayerContextValue.duration)
 	const [mute, setMute] = useState<boolean>(defaultPocdastPlayerContextValue.mute)
 	const [seek, setSeek] = useState<null | number>(defaultPocdastPlayerContextValue.seek)
 	const [isReady, setIsReady] = useState<boolean>(defaultPocdastPlayerContextValue.isReady)
+
+	const transcriptParts = useRef<TranscriptPart[]>(defaultPocdastPlayerContextValue.transcriptParts)
 
 	const seekTo = (seek: number | null) => {
 		setSeek(() => seek ? seek : null)
@@ -67,6 +84,41 @@ export const PodcastPlayerContextProvider: FC<PodcastPlayerContextProviderProps>
 		setTranscriptScrolling(prev => !prev)
 	}
 
+	const addTranscriptPart = useCallback((part: TranscriptPart) => {
+		transcriptParts.current = [...transcriptParts.current, part]
+	}, [])
+
+	const removeTranscriptPart = useCallback((ref: RefObject<HTMLDivElement>) => {
+		const matchIndex = transcriptParts.current.findIndex(part => {
+			return part.ref.current === ref.current
+		})
+
+		if (matchIndex > -1) {
+			transcriptParts.current.splice(matchIndex, 1)
+		}
+	}, [])
+
+	// const addTranscriptPart = useCallback((part: TranscriptPart) => {
+	// 	console.log('add', part)
+	// 	setTranscriptParts(prev => [...prev, part])
+	// }, [])
+	
+	// const removeTranscriptPart = useCallback((ref: RefObject<HTMLDivElement>) => {
+	// 	console.log('remove', ref.current)
+	// 	setTranscriptParts(parts => {
+	// 		const matchIndex = parts.findIndex(part => {
+	// 			// console.log(part.ref.current === ref.current)
+	// 			return part.ref.current === ref.current
+	// 		})
+	// 		// console.log(matchIndex)
+	// 		if (matchIndex > -1) {
+	// 			const update = parts.splice(matchIndex, 1)
+	// 			return update
+	// 		}
+	// 		return parts
+	// 	})
+	// }, [])
+
 	const store = {
 		play,
 		time,
@@ -81,9 +133,14 @@ export const PodcastPlayerContextProvider: FC<PodcastPlayerContextProviderProps>
 		isReady,
 		setIsReady,
 		toggleTranscriptScrolling,
-		transcriptScrolling
+		transcriptScrolling,
+		transcriptParts: transcriptParts.current,
+		// transcriptParts,
+		// setTranscriptParts
+		addTranscriptPart,
+		removeTranscriptPart
 	}
-
+	// console.log(transcriptParts)
 	return (
 		<PodcastPlayerContext.Provider value={store}>
 			{ children }

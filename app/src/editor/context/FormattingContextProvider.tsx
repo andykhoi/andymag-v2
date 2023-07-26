@@ -656,7 +656,7 @@ interface FormattingContextType {
 	// setAutoCollapseHeader: Dispatch<SetStateAction<boolean>>
 }
 
-export type FormattingContextProviderProps = Partial<Pick<FormattingContextType, 'defaultPadding' | 'optimalContentWidth' | 'fontSizingChart' | 'breakpoints' | 'panelWidth' | 'sidebarWidth'>> & { children: ReactNode }
+export type FormattingContextProviderProps = Partial<Pick<FormattingContextType, 'defaultPadding' | 'optimalContentWidth' | 'fontSizingChart' | 'breakpoints' | 'panelWidth' | 'sidebarWidth' | 'fontFamilies'>> & { children: ReactNode }
 
 // const inter = Inter({
 // 	weight: 'variable',
@@ -740,6 +740,7 @@ export const FormattingContextProvider: FC<FormattingContextProviderProps> = ({
 	optimalContentWidth: overrideOptimalContentWidth = null,
 	// autoCollapseHeader: overrideAutoCollapseHeader = null,
 	// fontScale: overrideFontScale = null,
+	fontFamilies: addCustomFontFamilies = null,
 	fontSizingChart: overridefontSizingChart = null,
 	panelWidth: overridePanelWidth = null,
 	sidebarWidth: overrideSidebarWidth = null,
@@ -750,7 +751,7 @@ export const FormattingContextProvider: FC<FormattingContextProviderProps> = ({
 	// const [autoCollapseHeader, setAutoCollapseHeader] = useState(overrideAutoCollapseHeader || defaultFormattingContextValue.autoCollapseHeader)
 	// const [fontScale, setFontScale] = useState(overrideFontScale || defaultFormattingContextValue.fontScale)
 	const [fontSizingChart, setfontSizingChart] = useState(overridefontSizingChart || defaultFormattingContextValue.fontSizingChart)
-	const [fontFamilies, ] = useState(defaultFormattingContextValue.fontFamilies)
+	const [fontFamilies, ] = useState({ ...defaultFormattingContextValue.fontFamilies, ...addCustomFontFamilies })
 	const [defaultFont, ] = useState(defaultFormattingContextValue.defaultFont)
 	const [sidebarWidth, ] = useState(overrideSidebarWidth || defaultFormattingContextValue.sidebarWidth)
 	const [panelWidth, ] = useState(overridePanelWidth || defaultFormattingContextValue.panelWidth)
