@@ -36,3 +36,12 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+## Misc Notes: 
+ 
+- on sidebar layout, the content container != the width of the viewport. Especially when the sidebar menu is open. This discrepancy makes screen media queries obselete when trying to resize content elements. This is where usage of container query comes in. 
+
+- the content container == width of viewport up until 1024px (when sidebar is available)
+
+- though the usage of the container is only used @ and above 1024px because the container breaks the scrolling functionality on mobile

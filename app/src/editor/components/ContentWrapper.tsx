@@ -41,16 +41,11 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 							.content {
 								width: 100%;
 								overscroll-behavior: contain;
-								container: content / normal;
+								// container: content / normal;
 								height: 100%;
-								overflow: visible;
+								overflow-y: visible;
 							}
-							// .grid {
-							// 	display: grid;
-							// 	width: 100%;
-							// 	grid-template-rows: auto;
-							// 	height: 100%;
-							// }
+							
 							@media screen and (min-width: 1024px) {
 								.content {
 									overflow-y: scroll;
@@ -68,13 +63,13 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 							font-size: ${fontSizingChart[`${userFormatting.fontScale}`]};
 						}
 					`}</style>
-					<style jsx>{`
+					{/* <style jsx>{`
 						@media screen and (min-width: 1024px) {
 							.content {
 								container: content / inline-size;
 							}
 						}
-					`}</style>
+					`}</style> */}
 				</div>	
 				:
 				<Spinner />

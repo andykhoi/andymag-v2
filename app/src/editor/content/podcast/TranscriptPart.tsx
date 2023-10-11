@@ -1,7 +1,7 @@
 import { FC, ReactNode, useEffect, useRef } from 'react'
-import { usePodcastPlayer } from '../context/PodcastPlayerContextProvider'
-import { useFormatting } from '../context/FormattingContextProvider'
-import { Text } from './Text'
+import { usePodcastPlayer } from '../../context/PodcastPlayerContextProvider'
+import { useFormatting } from '../../context/FormattingContextProvider'
+import { Text } from '../Text'
 
 interface TranscriptPartProps {
 	time: number

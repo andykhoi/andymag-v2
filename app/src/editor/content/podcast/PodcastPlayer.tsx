@@ -1,13 +1,14 @@
-import { FC, PointerEvent, TouchEvent, useEffect, useMemo, useState, useRef } from 'react'
+import { FC, PointerEvent, TouchEvent, useEffect, useMemo, useState, useRef, useCallback} from 'react'
 import ReactPlayer from 'react-player'
 import { OnProgressProps } from 'react-player/base'
-import { PodcastPlayerContextProvider, usePodcastPlayer } from '../context/PodcastPlayerContextProvider'
+import { PodcastPlayerContextProvider, usePodcastPlayer } from '../../context/PodcastPlayerContextProvider'
 import { disableBodyScroll } from 'body-scroll-lock'
 // import Slider from 'rc-slider'
 // import 'rc-slider/assets/index.css'
 import ReactSlider from 'react-slider'
 import { Mute, PausePodcast, PlayPodcast, Unmute, Transcript } from '@/components/icons'
-import { useFormatting } from '../context/FormattingContextProvider';
+import { useFormatting } from '../../context/FormattingContextProvider';
+import Content from '../Content'
 
 export interface PodcastPlayerProps {
 	audioUrl: string
@@ -402,24 +403,84 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 	chapters
 }) => {
 	const { optimalContentWidth, defaultPadding } = useFormatting()
+	const [isSticky, setIsSticky] = useState(false);
+	const fixedRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const currentRef = fixedRef.current;
+		
+		const observer = new IntersectionObserver(
+		  ([entry]) => {
+			console.log(entry)
+			setIsSticky(!entry.isIntersecting);
+		  },
+		  { threshold: [1] }
+		);
+	
+		if (currentRef) {
+			observer.observe(currentRef);
+		}
+	
+		return () => {
+		  if (currentRef) {
+			observer.unobserve(currentRef);
+		  }
+		};
+	  }, []);
+  
 	return (
-		<div className="podcast-player">
-				<div className="screen">
-					<Play />
-					<div className="info">
-						<Chapter chapters={chapters}/>
-						<Timer />
+		<>
+			<Content>
+				<div className="sticky-wrap">
+					<div className="podcast-player" ref={fixedRef}>
+							<div className="screen">
+								<Play />
+								<div className="info">
+									<Chapter chapters={chapters}/>
+									<Timer />
+								</div>
+								<div className="controls">
+									<TranscriptButton />
+									<MuteButton />
+								</div>
+							</div>
+							<div className="slider-wrap">
+								<Slider chapters={chapters} />
+								<Player url={audioUrl}/>
+							</div>
 					</div>
-					<div className="controls">
-						<TranscriptButton />
-						<MuteButton />
+					{/* duplicated to prevent layout shift on position fixed */}
+					<div className="podcast-player sticky-player" >
+							<div className="screen">
+								<Play />
+								<div className="info">
+									<Chapter chapters={chapters}/>
+									<Timer />
+								</div>
+								<div className="controls">
+									<TranscriptButton />
+									<MuteButton />
+								</div>
+							</div>
+							<div className="slider-wrap">
+								<Slider chapters={chapters} />
+								<Player url={audioUrl}/>
+							</div>
 					</div>
 				</div>
-				<div className="slider-wrap">
-					<Slider chapters={chapters} />
-					<Player url={audioUrl}/>
-				</div>
+			</Content>
 			<style jsx>{`
+				.sticky-wrap {
+					display: grid;
+				}
+				// .placeholder {
+				// 	height: 104px;
+				// 	width: 100%;
+				// 	background-color: black;
+				// 	position: absolute;
+				// 	top: 0;
+				// 	z-index: -10;
+				// }
 				.podcast-player {
 					--default-padding: 16px;
 					--default-margin: 0px;
@@ -427,13 +488,14 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 					--optimal-margin: 0px 52px;
 					--default-screen-margin: 0px 0px 22px 0px;
 					--optimal-screen-margin: 0px 0px 28px 0px;
+					width: 100%;
 					grid-column: 1 / -1;
 					background-color: #000000;
 					border-bottom: 1px solid #212121;
 					padding: var(--default-padding);
 					font-family: Inter;
 					transition: padding 165ms ease-in-out;
-					position: sticky;
+					grid-area: 1 / 1;
 					top: 0;
 				}
 				.screen {
@@ -449,6 +511,11 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 				.controls {
 					display: flex;
 					align-items: center;
+				}
+			`}</style>
+			<style jsx>{`
+				.sticky-player {
+					position: ${isSticky ? 'fixed' : 'initial'}
 				}
 			`}</style>
 			<style jsx>{`
@@ -486,7 +553,8 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 					}
 				}
 			`}</style> */}
-		</div>
+		</>
 		
+	
 	)
 }

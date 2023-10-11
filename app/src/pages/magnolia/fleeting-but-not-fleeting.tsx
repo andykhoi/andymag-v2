@@ -8,13 +8,13 @@ import { useActivity, useUserFormatting } from '@/contexts/UserContext'
 import { Contributors } from '@/types/schema'
 // import { GetStaticProps } from 'next'
 import { useRouter } from 'next/router'
-import { PodcastPlayer } from '@/editor/content/PodcastPlayer'
-import { PodcastCover } from '@/editor/content/PodcastCover'
-import { Podcast } from '@/editor/content/Podcast'
+import { PodcastPlayer } from '@/editor/content/podcast/PodcastPlayer'
+import { PodcastCover } from '@/editor/content/podcast/PodcastCover'
+import { Podcast } from '@/editor/content/podcast/Podcast'
 import { Text } from '@/editor/content/Text'
 // import Draggable from 'react-draggable'
 import { Londrina_Solid } from '@next/font/google'
-import { TranscriptPart } from '@/editor/content/TranscriptPart'
+import { TranscriptPart } from '@/editor/content/podcast/TranscriptPart'
 
 interface WhatIsArtProps {
 	contributors: Contributors[]

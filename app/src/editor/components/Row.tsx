@@ -24,6 +24,7 @@ export const Row: FC<RowProps> = ({
 					grid-template-columns: 1fr min(${optimalContentWidth}, calc(100% - (2*${defaultPadding}))) 1fr;
 					grid-auto-rows: auto;
 					height: ${ height };
+					continer: row / inline-size;
 				}
 			`}</style>
 		</div>

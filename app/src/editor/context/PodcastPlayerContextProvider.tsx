@@ -1,5 +1,5 @@
 import { createContext, FC, ReactNode, useState, Dispatch, SetStateAction, useContext, RefObject, useCallback, useRef } from 'react'
-import { TranscriptPart } from '../content/TranscriptPart'
+import { TranscriptPart } from '../content/podcast/TranscriptPart'
 
 type TranscriptPart = {
 	ref: RefObject<HTMLDivElement>
