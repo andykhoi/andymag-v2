@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, Children } from 'react'
+import { FC, ReactNode, useEffect, Children, useState, useRef } from 'react'
 // import { Font } from './Font'
 // import { Grid } from './Grid'
 import { useFormatting } from '../context/FormattingContextProvider'
@@ -19,61 +19,94 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 		fontSizingChart,
 		defaultFont,
 		fontFamilies,
-		optimalContentWidth,
-		defaultPadding,
+		setActiveContentBreakpoint,
+		activeContentBreakpoint,
+		breakpoints,
 	} = useFormatting()
-	const arrayChildren = Children.toArray(children)
+
+	
+	const [isContentLoading, setIsContentLoading] = useState<boolean>(true) // have to wait for saved user formatting and content resizing
+	const contentRef = useRef<HTMLDivElement>(null)
+
+	// init activeContentBreakpoint & add resizeObserver to content div 
+	useEffect(() => {
+		const updateActiveBreakpoint = (el: HTMLDivElement) => {
+			if (currentRef) {
+				const optimalBreakpointPixelValue = Number(breakpoints['optimal'].replace('px', ''))
+				if (currentRef.clientWidth >= optimalBreakpointPixelValue) {
+					setActiveContentBreakpoint('optimal')
+				} else {
+					setActiveContentBreakpoint('default')
+				}
+			}
+		}
+
+		const resizeObserver = new ResizeObserver(([content]) => { 
+			updateActiveBreakpoint(content.target as HTMLDivElement)
+		})
+
+		const currentRef = contentRef.current
+
+		if (currentRef) {
+			updateActiveBreakpoint(currentRef)
+			resizeObserver.observe(currentRef)
+		}
+
+		return () => {
+			if (currentRef) {
+				resizeObserver.unobserve(currentRef)
+			}
+		}
+ 	}, [setActiveContentBreakpoint, breakpoints])
+
+	// remove loader after all necessary stlying mutations have been painted
+	useEffect(() => {
+		if (isLoaded && userFormatting && activeContentBreakpoint) {
+			setIsContentLoading(false)
+		}
+	}, [isLoaded, userFormatting, activeContentBreakpoint])
+
 	return (
 		<>
-			{/* probably better loading would be showing loader all the way until the content wrapper content is mounted.
-				basically something like a loader overlay that sits on top until content is "ready" 
-				- probably can write some JS event to watch if content above the fold has loaded
-			*/}
-			{	(isLoaded && userFormatting) ?
-				<div className="content">
-					{ children }
-					{/* <div className="font">
-						<div className="grid">
-							{ children }
-						</div>
-					</div> */}
-					<style jsx>{`
-							.content {
-								width: 100%;
-								overscroll-behavior: contain;
-								// container: content / normal;
-								height: 100%;
-								overflow-y: visible;
-							}
-							
-							@media screen and (min-width: 1024px) {
-								.content {
-									overflow-y: scroll;
-								}
-							}
-					`}</style>
-					{/* <style jsx>{`
-						.grid {
-							grid-template-columns: 1fr min(${optimalContentWidth}, calc(100% - (2*${defaultPadding}))) 1fr;
-						}
-					`}</style> */}
-					<style jsx>{`
+			<div className="content" ref={contentRef}>
+				<div className={`loader${!isContentLoading ? ' hide' : ''}`}>
+					loading ... 
+				</div>
+				{ children }
+				<style jsx>{`
+					.content {
+						width: 100%;
+						overscroll-behavior: contain;
+						height: 100%;
+						overflow-y: visible;
+						position: relative;
+					}
+					.loader { 
+						position: absolute;
+						height: 100%;
+						width: 100%;
+						background-color: blue;
+						display: flex; 
+						align-items: center;
+						justify-content: center;
+						z-index: 3;
+					}
+					.hide {
+						display: none;
+					}
+					@media screen and (min-width: 1024px) {
 						.content {
-							font-family: ${fontFamilies[`${defaultFont}`].style.fontFamily};
-							font-size: ${fontSizingChart[`${userFormatting.fontScale}`]};
+							overflow-y: scroll;
 						}
-					`}</style>
-					{/* <style jsx>{`
-						@media screen and (min-width: 1024px) {
-							.content {
-								container: content / inline-size;
-							}
-						}
-					`}</style> */}
-				</div>	
-				:
-				<Spinner />
-			}
+					}
+				`}</style>
+				<style jsx>{`
+					.content {
+						font-family: ${fontFamilies[`${defaultFont}`].style.fontFamily};
+						font-size: ${ userFormatting ? fontSizingChart[`${userFormatting.fontScale}`] : fontSizingChart['md']};
+					}
+				`}</style>
+			</div>	
 		</>
 		
 	)

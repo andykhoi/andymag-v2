@@ -620,6 +620,8 @@ import { NextFont, NextFontWithVariable } from '@next/font'
 interface FormattingContextType {
 	defaultPadding: string
 	optimalContentWidth: string
+	activeContentBreakpoint: 'optimal' | 'default' | null
+	setActiveContentBreakpoint: Dispatch<SetStateAction<'optimal' | 'default' | null>>
 	// autoCollapseHeader: boolean
 
 	sidebarWidth: string
@@ -703,6 +705,8 @@ const charter = localFont({
 const defaultFormattingContextValue: FormattingContextType = {
 	defaultPadding: '23px',
 	optimalContentWidth: '723px',
+	activeContentBreakpoint: null,
+	setActiveContentBreakpoint: () => null,
 	// autoCollapseHeader: false,
 
 	sidebarWidth: '76px',
@@ -723,7 +727,7 @@ const defaultFormattingContextValue: FormattingContextType = {
 		charter,
 	},
 	defaultFont: 'charter',
-
+	
 	// setFontScale: () => null,
 	// setfontSizingChart: () => null,
 	// setDefaultPadding: () => null,
@@ -756,14 +760,15 @@ export const FormattingContextProvider: FC<FormattingContextProviderProps> = ({
 	const [sidebarWidth, ] = useState(overrideSidebarWidth || defaultFormattingContextValue.sidebarWidth)
 	const [panelWidth, ] = useState(overridePanelWidth || defaultFormattingContextValue.panelWidth)
 	const [breakpoints, ] = useState({
-		optimal: `${optimalContentWidth} + (2 * ${defaultPadding})`,
+		optimal: `${Number(optimalContentWidth.replace('px', '')) + (2 * Number(defaultPadding.replace('px', '')))}px`,
 		sidebar: `${sidebarWidth} + ${panelWidth} + (${optimalContentWidth} + (2 * ${defaultPadding}))`,
 	})
-
+	const [activeContentBreakpoint, setActiveContentBreakpoint] = useState(defaultFormattingContextValue.activeContentBreakpoint)
 	const store = {
 		defaultPadding,
 		// setDefaultPadding,
-
+		activeContentBreakpoint,
+		setActiveContentBreakpoint,
 		optimalContentWidth,
 		// setOptimalContentWidth,
 

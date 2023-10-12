@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { FC } from 'react'
 import { useFormatting } from '../../context/FormattingContextProvider'
-import Content from '../Content'
+
 export interface PodcastCoverProps {
 	coverSrc: string,
 	coverAlt: string
@@ -14,7 +14,6 @@ export const PodcastCover: FC<PodcastCoverProps> = ({
 	const { fontFamilies } = useFormatting()
 
 	return (
-		<Content>
 			<div className="cover">
 				{/* think about how to make this customizable */}
 				<div className="dafna-title">
@@ -30,15 +29,13 @@ export const PodcastCover: FC<PodcastCoverProps> = ({
 				</div>
 				<Image src={coverSrc} alt={coverAlt} fill style={{ objectFit: 'cover'}}/>
 				<div className="cover-gradient" />
-			</div>
-			<style jsx>{`
+				<style jsx>{`
 					.cover {
-						--default-height: calc(100% - var(--mobile-toolbar-height) - 104px);
-						--optimal-height: calc(100% - 142px);
+						--default-height: calc(100% - var(--mobile-toolbar-height) - 101px);
+						--sidebar-height: calc(100% - 135px);
 						position: relative;
 						width: 100%;
 						height: var(--default-height);
-						// container: content / inline-size;
 					}
 					.dafna-title {
 						position: absolute;
@@ -57,14 +54,14 @@ export const PodcastCover: FC<PodcastCoverProps> = ({
 						width: 100%;
 					}
 
-					@container content (min-width: 1px) {
+					@media screen and (min-width: 1024px) {
 						.cover {
-							// height: 10%;
-							height: var(--optimal-height);
+							height: var(--sidebar-height);
 						}
+
 					}
-				`}
-			</style>
-		</Content>
+				`}</style>
+			</div>
+			
 	)
 }

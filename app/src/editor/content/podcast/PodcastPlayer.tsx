@@ -1,5 +1,6 @@
 import { FC, PointerEvent, TouchEvent, useEffect, useMemo, useState, useRef, useCallback} from 'react'
-import ReactPlayer from 'react-player'
+import ReactPlayerType from 'react-player/types'
+import dynamic from 'next/dynamic'
 import { OnProgressProps } from 'react-player/base'
 import { PodcastPlayerContextProvider, usePodcastPlayer } from '../../context/PodcastPlayerContextProvider'
 import { disableBodyScroll } from 'body-scroll-lock'
@@ -8,7 +9,8 @@ import { disableBodyScroll } from 'body-scroll-lock'
 import ReactSlider from 'react-slider'
 import { Mute, PausePodcast, PlayPodcast, Unmute, Transcript } from '@/components/icons'
 import { useFormatting } from '../../context/FormattingContextProvider';
-import Content from '../Content'
+
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false})
 
 export interface PodcastPlayerProps {
 	audioUrl: string
@@ -194,7 +196,7 @@ const Player: FC<PlayerProps> = ({
 	url
 }) => {
 	const { play, setTime, setDuration, mute, setIsReady, seek, seekTo, time, isReady, transcriptParts } = usePodcastPlayer()
-	const playerRef = useRef<ReactPlayer>(null)
+	const playerRef = useRef<ReactPlayerType>(null)
 
 	const scrollToTranscript = (time: number) => {
 		if (transcriptParts.length > 0) {
@@ -205,7 +207,7 @@ const Player: FC<PlayerProps> = ({
 		}	
 	}
 
-	const onReadyHandler = (p: ReactPlayer) => {
+	const onReadyHandler = (p: ReactPlayerType) => {
 		if (isReady) return
 		
 		setIsReady(true)
@@ -257,7 +259,6 @@ const Slider: FC<SliderProps> = ({
 	const onPointerDownHandler = (e: PointerEvent<HTMLDivElement>) => {
 		if (sliderRef.current) {
 			setDragging(true)
-			// console.log('test')
 			// disableBodyScroll(sliderRef.current)
 			document.body.style.overflow = 'hidden'
 			const pointerPercentage = (e.clientX - sliderRef.current.getBoundingClientRect().left) / sliderRef.current.offsetWidth
@@ -402,7 +403,7 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 	audioUrl,
 	chapters
 }) => {
-	const { optimalContentWidth, defaultPadding } = useFormatting()
+	const { optimalContentWidth, defaultPadding, activeContentBreakpoint } = useFormatting()
 	const [isSticky, setIsSticky] = useState(false);
 	const fixedRef = useRef<HTMLDivElement>(null);
 
@@ -411,7 +412,7 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 		
 		const observer = new IntersectionObserver(
 		  ([entry]) => {
-			console.log(entry)
+			// console.log(entry)
 			setIsSticky(!entry.isIntersecting);
 		  },
 		  { threshold: [1] }
@@ -430,95 +431,70 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
   
 	return (
 		<>
-			<Content>
-				<div className="sticky-wrap">
-					<div className="podcast-player" ref={fixedRef}>
-							<div className="screen">
-								<Play />
-								<div className="info">
-									<Chapter chapters={chapters}/>
-									<Timer />
-								</div>
-								<div className="controls">
-									<TranscriptButton />
-									<MuteButton />
-								</div>
-							</div>
-							<div className="slider-wrap">
-								<Slider chapters={chapters} />
-								<Player url={audioUrl}/>
-							</div>
+			<div className={`podcast-player${activeContentBreakpoint === 'optimal' ? ' optimal' : ''}`} ref={fixedRef}>
+				<div className="screen">
+					<Play />
+					<div className="info">
+						<Chapter chapters={chapters}/>
+						<Timer />
 					</div>
-					{/* duplicated to prevent layout shift on position fixed */}
-					<div className="podcast-player sticky-player" >
-							<div className="screen">
-								<Play />
-								<div className="info">
-									<Chapter chapters={chapters}/>
-									<Timer />
-								</div>
-								<div className="controls">
-									<TranscriptButton />
-									<MuteButton />
-								</div>
-							</div>
-							<div className="slider-wrap">
-								<Slider chapters={chapters} />
-								<Player url={audioUrl}/>
-							</div>
+					<div className="controls">
+						<TranscriptButton />
+						<MuteButton />
 					</div>
 				</div>
-			</Content>
-			<style jsx>{`
-				.sticky-wrap {
-					display: grid;
-				}
-				// .placeholder {
-				// 	height: 104px;
-				// 	width: 100%;
-				// 	background-color: black;
-				// 	position: absolute;
-				// 	top: 0;
-				// 	z-index: -10;
-				// }
-				.podcast-player {
-					--default-padding: 16px;
-					--default-margin: 0px;
-					--optimal-padding: 32px 0px;
-					--optimal-margin: 0px 52px;
-					--default-screen-margin: 0px 0px 22px 0px;
-					--optimal-screen-margin: 0px 0px 28px 0px;
-					width: 100%;
-					grid-column: 1 / -1;
-					background-color: #000000;
-					border-bottom: 1px solid #212121;
-					padding: var(--default-padding);
-					font-family: Inter;
-					transition: padding 165ms ease-in-out;
-					grid-area: 1 / 1;
-					top: 0;
-				}
-				.screen {
-					display: flex;
-					align-items: center;
-					margin-bottom: 22px;
-				}
-				.info {
-					flex: 2;
-					padding: 0px 28px;	
-					min-width: 0px;
-				}
-				.controls {
-					display: flex;
-					align-items: center;
-				}
-			`}</style>
-			<style jsx>{`
-				.sticky-player {
-					position: ${isSticky ? 'fixed' : 'initial'}
-				}
-			`}</style>
-			<style jsx>{`
+				<div className="slider-wrap">
+					<Slider chapters={chapters} />
+					<Player url={audioUrl}/>
+				</div>
+				<style jsx>{`
+					.podcast-player {
+						--default-padding: 16px;
+						--default-margin: 0px;
+						// --optimal-padding: 32px 0px;
+						// --optimal-margin: 0px 52px;
+						--default-screen-margin: 0px 0px 22px 0px;
+						--optimal-screen-margin: 0px 0px 28px 0px;
+						width: 100%;
+						grid-column: 1 / -1;
+						background-color: #000000;
+						border-bottom: 1px solid #212121;
+						padding: var(--default-padding);
+						font-family: Inter;
+						transition: padding 165ms ease-in-out;
+						grid-area: 1 / 1;
+						top: 0;
+					}
+					.podcast-player.optimal {
+						// padding: var(--optimal-padding);
+						// margin: var(--optimal-margin);
+					}
+					.podcast-player.optimal .screen {
+						// margin: var(--optimal-screen-margin);
+					}
+					.screen {
+						display: flex;
+						align-items: center;
+						margin-bottom: 22px;
+					}
+					.info {
+						flex: 2;
+						padding: 0px 28px;	
+						min-width: 0px;
+					}
+					.controls {
+						display: flex;
+						align-items: center;
+					}
+					
+					@media screen and (min-width: 1024px) {
+						.podcast-player {
+							height: var(--sidebar-height);
+						}
+					}
+				`}</style>
+			</div>
+			{/* <style jsx>{`
 				@media screen and (min-width: calc(${optimalContentWidth} + 2 * ${defaultPadding})) {
 					.podcast-player {
 						padding: var(--optimal-padding);
@@ -528,9 +504,9 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 						margin: var(--optimal-screen-margin);
 					}
 				}
-			`}</style>
+			`}</style> */}
 			{/* on sidebar layout monitor the content container and resize the component accordingly (revert to default styling if container < optimal) */}
-			<style jsx>{`
+			{/* <style jsx>{`
 				@container content (max-width: calc(${optimalContentWidth} + 2 * ${defaultPadding} - 1px)) {
 					.podcast-player {
 						padding: var(--default-padding);
@@ -540,7 +516,7 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 						margin: var(--default-screen-margin);
 					}
 				}
-			`}</style>
+			`}</style> */}
 			{/* <style jsx>{`
 				@container content (min-width: calc(${optimalContentWidth} + 2 * ${defaultPadding})) {
 					.podcast-player {
