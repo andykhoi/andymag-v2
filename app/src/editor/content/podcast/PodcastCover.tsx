@@ -30,12 +30,17 @@ export const PodcastCover: FC<PodcastCoverProps> = ({
 				<Image src={coverSrc} alt={coverAlt} fill style={{ objectFit: 'cover'}}/>
 				<div className="cover-gradient" />
 				<style jsx>{`
+					// .cover {
+					// 	--default-height: calc(100% - var(--mobile-toolbar-height) - 101px);
+					// 	--sidebar-height: calc(100% - 135px);
+					// 	position: relative;
+					// 	width: 100%;
+					// 	height: var(--default-height);
+					// }
 					.cover {
-						--default-height: calc(100% - var(--mobile-toolbar-height) - 101px);
-						--sidebar-height: calc(100% - 135px);
 						position: relative;
 						width: 100%;
-						height: var(--default-height);
+						flex: 2;
 					}
 					.dafna-title {
 						position: absolute;
@@ -58,7 +63,6 @@ export const PodcastCover: FC<PodcastCoverProps> = ({
 						.cover {
 							height: var(--sidebar-height);
 						}
-
 					}
 				`}</style>
 			</div>

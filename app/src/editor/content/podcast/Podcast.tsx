@@ -22,25 +22,29 @@ export const Podcast: FC<PodcastProps> = ({
 	// useEffect(() => console.log('podcast'), [])
 	return (
 		<PodcastPlayerContextProvider>
-			<PodcastCover coverAlt={coverAlt} coverSrc={coverSrc}/>
-			<PodcastPlayer audioUrl={audioUrl} chapters={chapters}/>
+			<div className="podcast-landing">
+				<PodcastCover coverAlt={coverAlt} coverSrc={coverSrc}/>
+				<PodcastPlayer audioUrl={audioUrl} chapters={chapters}/>
+			</div>
 			<div className="transcript-wrap">
 				{ children }
 			</div>
-			
+
 			<style jsx>{`
+				.podcast-landing {
+					display: flex;
+					flex-direction: column;
+					height: calc(100% - 53px - env(safe-area-inset-bottom));	
+				}
+
 				.podcast {	
-					--default-transcript-padding: 48px 0px 68px 0px;
-					--optimal-transcript-padding: 68px 0px;
 					height: 100%;
 					background-color: #000000;
 				}
 
-				.cover-wrap {
-					height: calc(100% - 53px - env(safe-area-inset-bottom));	
-				}
-
 				.transcript-wrap {
+					--default-transcript-padding: 48px 0px 68px 0px;
+					--optimal-transcript-padding: 68px 0px;
 					color: #B0B0B0;
 					// padding-top: 24px;
 					// padding-bottom: 68px;
@@ -51,19 +55,13 @@ export const Podcast: FC<PodcastProps> = ({
 					background-color: #000000;
 				}
 
-				.flex {
-					grid-column: -1 / 1;
-					display: flex;
-					flex-direction: column;
-				}
-
 				@media screen and (min-width: 1024px) {
-					.cover-wrap {
+					.podcast-landing {
 						height: 100%;
 					}
 				}
 			`}</style>
-			<style jsx>{`
+			{/* <style jsx>{`
 				@media screen and (min-width: calc(${optimalContentWidth} + 2 * ${defaultPadding})) {
 					.transcript-wrap {
 						padding: var(--optimal-transcript-padding);
@@ -76,7 +74,7 @@ export const Podcast: FC<PodcastProps> = ({
 						padding: var(--default-transcript-padding);
 					}
 				}
-			`}</style>
+			`}</style> */}
 		</PodcastPlayerContextProvider>
 		
 	)
