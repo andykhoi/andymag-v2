@@ -34,7 +34,8 @@ export const Podcast: FC<PodcastProps> = ({
 				.podcast-landing {
 					display: flex;
 					flex-direction: column;
-					height: calc(100% - 53px - env(safe-area-inset-bottom));	
+					height: calc(100% - 53px);	
+					// height: 100%;
 				}
 
 				.podcast {	

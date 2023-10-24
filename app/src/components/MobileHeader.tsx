@@ -105,11 +105,14 @@ export const MobileHeader: FC<MobileHeaderProps> = ({
 					position: fixed;
 					z-index: 10;
 					top: 0;
+					background: rgba(22, 22, 24, 0.83);
+					box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.39);
 					backdrop-filter: blur(13px);
-					box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.39);
+					// backdrop-filter: blur(13px);
+					// box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.39);
 					padding: 0px 23px;
 					justify-content: space-between;
-					border-bottom: 1px solid #313135;
+					// border-bottom: 1px solid #313135;
 					transition: top 0.15s ease;
 				}
 				.header--collapsed {

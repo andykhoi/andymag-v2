@@ -24,7 +24,6 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 		breakpoints,
 	} = useFormatting()
 
-	
 	const [isContentLoading, setIsContentLoading] = useState<boolean>(true) // have to wait for saved user formatting and content resizing
 	const contentRef = useRef<HTMLDivElement>(null)
 
@@ -59,7 +58,7 @@ export const ContentWrapper: FC<ContentWrapperProps> = ({
 		}
  	}, [setActiveContentBreakpoint, breakpoints])
 
-	// remove loader after all necessary stlying mutations have been painted
+	// remove loader after all necessary styling mutations have been painted
 	useEffect(() => {
 		if (isLoaded && userFormatting && activeContentBreakpoint) {
 			setIsContentLoading(false)

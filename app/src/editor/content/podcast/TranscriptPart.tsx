@@ -18,7 +18,7 @@ export const TranscriptPart: FC<TranscriptPartProps> = ({
 		transcriptParts,
 		removeTranscriptPart
 	} = usePodcastPlayer()
-	const { optimalContentWidth, defaultPadding } = useFormatting()
+	const { activeContentBreakpoint } = useFormatting()
 
 	useEffect(() => {
 		if (transcriptRef.current) {
@@ -33,7 +33,7 @@ export const TranscriptPart: FC<TranscriptPartProps> = ({
 	}, [addTranscriptPart, time, removeTranscriptPart])
 
 	return (
-		<div className="transcript-part" ref={transcriptRef}>
+		<div className={`transcript-part${activeContentBreakpoint === 'optimal' ? ' optimal' : ''}`}ref={transcriptRef}>
 			<Text>
 				{ children }
 			</Text>
@@ -44,19 +44,8 @@ export const TranscriptPart: FC<TranscriptPartProps> = ({
 					scroll-margin-top: var(--default-scroll-margin-top);
 				}
 
-			`}</style>
-			<style jsx>{`
-				@media screen and (min-width: calc(${optimalContentWidth} + 2 * ${defaultPadding})) {
-					.transcript-part {
-						scroll-margin-top: var(--optimal-scroll-margin-top)
-					}
-				}
-			`}</style>
-			<style jsx>{`
-				@container content (max-width: calc(${optimalContentWidth} + 2 * ${defaultPadding} - 1px)) {
-					.transcript-part {
-						scroll-margin-top: var(--default-scroll-margin-top);
-					}
+				.transcript-part.optimal {
+					--optimal-scroll-margin-top: calc(142px + 68px);
 				}
 			`}</style>
 		</div>

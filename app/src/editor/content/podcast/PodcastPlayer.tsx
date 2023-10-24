@@ -1,13 +1,14 @@
-import { FC, PointerEvent, TouchEvent, useEffect, useMemo, useState, useRef, useCallback} from 'react'
+import React, { FC, PointerEvent, TouchEvent, useEffect, useMemo, useState, useRef, useCallback} from 'react'
 import ReactPlayerType from 'react-player/types'
 import dynamic from 'next/dynamic'
-import { OnProgressProps } from 'react-player/base'
+// import { OnProgressProps } from 'react-player/base'
 import { PodcastPlayerContextProvider, usePodcastPlayer } from '../../context/PodcastPlayerContextProvider'
-import { disableBodyScroll } from 'body-scroll-lock'
+// import { disableBodyScroll } from 'body-scroll-lock'
 import { Mute, PausePodcast, PlayPodcast, Unmute, Transcript } from '@/components/icons'
 import { useFormatting } from '../../context/FormattingContextProvider';
 
-const ReactPlayer = dynamic(() => import('react-player'), { ssr: false})
+const HiddenPlayer = dynamic(() => import('./HiddenPlayer'), { ssr: false})
+// const ReactPlayer = dynamic(() => import('react-player'), { ssr: false})
 
 export interface PodcastPlayerProps {
 	audioUrl: string
@@ -24,19 +25,19 @@ interface SliderProps {
 	}[]
 }
 
-type PlayerProps = Pick<PodcastPlayerProps, 'audioUrl'>
+// type PlayerProps = Pick<PodcastPlayerProps, 'audioUrl'>
 type ChapterProps = Pick<PodcastPlayerProps, 'chapters'>
 
-function convertTimeFormatToSeconds(time: string): number {
-    let segments = time.split(':').reverse();
+// function convertTimeFormatToSeconds(time: string): number {
+//     let segments = time.split(':').reverse();
 
-    let seconds = parseInt(segments[0], 10); // Seconds
-    let minutes = segments[1] ? parseInt(segments[1], 10) : 0; // Minutes
-    let hours = segments[2] ? parseInt(segments[2], 10) : 0; // Hours
+//     let seconds = parseInt(segments[0], 10); // Seconds
+//     let minutes = segments[1] ? parseInt(segments[1], 10) : 0; // Minutes
+//     let hours = segments[2] ? parseInt(segments[2], 10) : 0; // Hours
 
-    // Convert it all to seconds
-    return seconds + minutes * 60 + hours * 3600;
-}
+//     // Convert it all to seconds
+//     return seconds + minutes * 60 + hours * 3600;
+// }
 
 function convertSecondsToTimeFormat(seconds: number | null): string {
     // Calculate hours, minutes, and seconds
@@ -60,23 +61,20 @@ function convertSecondsToTimeFormat(seconds: number | null): string {
 
 const Play: FC = () => {
 	const { togglePlay, play } = usePodcastPlayer()
-	const { optimalContentWidth, defaultPadding } = useFormatting()
+	const { activeContentBreakpoint } = useFormatting()
 	return (
-		<div onClick={() => togglePlay()}>
+		<div onClick={() => togglePlay()} className={`${activeContentBreakpoint === 'optimal' ? 'optimal' : ''}`}>
 			{ !play ? <PlayPodcast /> : <PausePodcast /> }
 			<style jsx>{`
 				div {
 					width: 36px;
 					height: 36px;
 				}
-				@container content (min-width: calc(${optimalContentWidth} + 2 * ${defaultPadding})) {
-					div {
-						width: 40px;
-						height: 40px;
-					}
+				div.optimal {
+					width: 40px;
+					height: 40px;
 				}
 			`}</style>
-			{/* <button onClick={() => togglePlay()}>{play ? 'pause' : 'play'}</button> */}
 		</div>
 	)
 }
@@ -95,12 +93,6 @@ const MuteButton: FC = () => {
 					padding: 0;
 					padding-left: 16px;
 				}
-				// .unmute {
-				// 	padding-bottom: 9px;
-				// }
-				// .mute {
-				// 	padding-bottom: 11px;	
-				// }
 				.mute-button {
 					display: flex;
 				}
@@ -174,7 +166,7 @@ const Chapter: FC<ChapterProps> = ({
 	const chapter = getChapter()
 	return (
 		<div>
-			<p>{chapter ? chapter.name : ''} / Fleeting But Not Fleeting</p>
+			<p>{chapter?.name} / Fleeting But Not Fleeting</p>
 			<style jsx>{`
 				p {
 					color: white;
@@ -189,60 +181,60 @@ const Chapter: FC<ChapterProps> = ({
 	)	
 }
 
-const Player: FC<PlayerProps> = ({
-	audioUrl
-}) => {
-	const { play, setTime, setDuration, mute, setIsReady, seek, seekTo, time, isReady, transcriptParts } = usePodcastPlayer()
-	const playerRef = useRef<ReactPlayerType>(null)
-	const scrollToTranscript = (time: number) => {
-		if (transcriptParts.length > 0) {
-			const transcriptIndex = transcriptParts.findIndex(part => {
-				return time < part.time
-			})
-			if (transcriptIndex > -1) transcriptParts[transcriptIndex - 1].ref.current?.scrollIntoView({ behavior: 'smooth' })
-		}	
-	}
+// const Player: FC<PlayerProps> = ({
+// 	audioUrl
+// }) => {
+// 	const { play, setTime, setDuration, mute, setIsReady, seek, seekTo, time, isReady, transcriptParts } = usePodcastPlayer()
+// 	const playerRef = useRef<ReactPlayerType>(null)
+// 	const scrollToTranscript = (time: number) => {
+// 		if (transcriptParts.length > 0) {
+// 			const transcriptIndex = transcriptParts.findIndex(part => {
+// 				return time < part.time
+// 			})
+// 			if (transcriptIndex > -1) transcriptParts[transcriptIndex - 1].ref.current?.scrollIntoView({ behavior: 'smooth' })
+// 		}	
+// 	}	
 
-	const onReadyHandler = (p: ReactPlayerType) => {
-		if (isReady) return
+// 	const onReadyHandler = (p: ReactPlayerType) => {
+// 		if (isReady) return
 		
-		setIsReady(true)
-		setDuration(p.getDuration())
-		setTime(p.getCurrentTime())
-	}
+// 		setIsReady(true)
+// 		setDuration(p.getDuration())
+// 		setTime(p.getCurrentTime())
+// 	}
 
-	const onProgressHandler = (e: OnProgressProps) => {
-		// if (play) setTime(e.playedSeconds)
-		setTime(e.playedSeconds)
-		scrollToTranscript(e.playedSeconds)
-	}
+// 	const onProgressHandler = (e: OnProgressProps) => {
+// 		// if (play) setTime(e.playedSeconds)
+// 		setTime(e.playedSeconds)
+// 		scrollToTranscript(e.playedSeconds)
+// 	}
 
-	const onSeekHandler = (e: number) => {
-		// setTime(e)
-		seekTo(null)
-	}
+// 	const onSeekHandler = (e: number) => {
+// 		// setTime(e)
+// 		seekTo(null)
+// 	}
 
-	useEffect(() => {
-		if (playerRef.current && seek) {
-			playerRef.current.seekTo(seek)
-		}	
-	}, [seek])
+// 	useEffect(() => {
+// 		if (playerRef.current && seek) {
+// 			playerRef.current.seekTo(seek)
+// 		}	
+// 	}, [seek])
 
-	return (
-		<ReactPlayer
-			url={audioUrl}
-			ref={playerRef}
-			onSeek={e => onSeekHandler(e)}
-			config={{file:{forceAudio: true}}}
-			playing={play}
-			height={0}
-			width={0}
-			muted={mute}
-			onReady={p => onReadyHandler(p)}
-			onProgress={(e) => onProgressHandler(e)}
-		/>
-	)
-}
+// 	return (
+// 		<ReactPlayer
+// 			url={audioUrl}
+// 			ref={playerRef}
+// 			onSeek={e => onSeekHandler(e)}
+// 			config={{file:{forceAudio: true}}}
+// 			playing={play}
+// 			height={0}
+// 			width={0}
+// 			muted={mute}
+// 			onReady={p => onReadyHandler(p)}
+// 			onProgress={(e) => onProgressHandler(e)}
+// 		/>
+// 	)
+// }
 
 const Slider: FC<SliderProps> = ({
 	chapters
@@ -402,6 +394,7 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 	const { optimalContentWidth, defaultPadding, activeContentBreakpoint } = useFormatting()
 	const [isSticky, setIsSticky] = useState(false);
 	const fixedRef = useRef<HTMLDivElement>(null);
+	const hiddenPlayerRef = useRef<ReactPlayerType>(null)
 
 	useEffect(() => {
 		const currentRef = fixedRef.current;
@@ -441,7 +434,6 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 					</div>
 					<div className="slider-wrap">
 						<Slider chapters={chapters} />
-						<Player audioUrl={audioUrl}/>
 					</div>
 				</div>
 			</div>
@@ -460,7 +452,7 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 					</div>
 					<div className="slider-wrap">
 						<Slider chapters={chapters} />
-						<Player audioUrl={audioUrl}/>
+						<HiddenPlayer audioUrl={audioUrl} hiddenPlayerRef={hiddenPlayerRef}/>
 					</div>
 				</div>
 			</div>
@@ -468,18 +460,21 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 				.podcast-grid {
 					display: grid;
 				}
+				
 				.sticky {
 					position: fixed;
+					width: -webkit-fill-available; /* Chrome, Safari, newer versions of Opera, almost all iOS browsers (including Safari) */
+					width: -moz-available; /* Firefox */
+					width: fill-available;
 				}
+
 				.podcast-player-wrap {
+					min-width: 0;
 					--default-padding: 16px;
 					--default-margin: 0px;
 					--optimal-padding: 32px 52px 0px 52px;
 					--default-screen-margin: 0px 0px 22px 0px;
 					--optimal-screen-margin: 0px 0px 28px 0px;
-					width: -webkit-fill-available; /* Chrome, Safari, newer versions of Opera, almost all iOS browsers (including Safari) */
-					width: -moz-available; /* Firefox */
-					width: fill-available;
 					padding: var(--default-padding);
 					background-color: #000000;
 					font-family: Inter;
@@ -510,7 +505,8 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 				}
 
 				.info {
-					flex: 2;
+					flex: 1;
+					overflow: hidden;
 					padding: 0px 28px;	
 					min-width: 0px;
 				}
@@ -518,6 +514,7 @@ export const PodcastPlayer: FC<PodcastPlayerProps> = ({
 				.controls {
 					display: flex;
 					align-items: center;
+					width: 77px;
 				}
 				
 				@media screen and (min-width: 1024px) {
